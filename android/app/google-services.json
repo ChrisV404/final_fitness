@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "16723727966",
+    "project_id": "finalfitness-e2f87",
+    "storage_bucket": "finalfitness-e2f87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16723727966:android:272f6f457d5bad5eae46cf",
+        "android_client_info": {
+          "package_name": "com.example.final_fitness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7K4K0zO4UO493bKSgbno0mRiTjggm8VA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
