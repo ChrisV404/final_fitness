@@ -1,18 +1,24 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+class User {
+    late String email;
+}
+var user = User();
+
+
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
+  HomePage({super.key});  
 
-  final user = FirebaseAuth.instance.currentUser!;
-
+  // final user = FirebaseAuth.instance.currentUser!;
+  
   // sign user out method
   void signUserOut() {
-    FirebaseAuth.instance.signOut();
+    print("temporary function");
   }
 
   @override
   Widget build(BuildContext context) {
+    user.email = 'gmail.com';
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(

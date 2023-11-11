@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:final_fitness/components/my_button.dart';
 import 'package:final_fitness/components/my_textfield.dart';
 import 'package:final_fitness/components/square_tile.dart';
+import 'package:realm/realm.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -30,26 +30,41 @@ class _RegisterPageState extends State<RegisterPage> {
       },
     );
 
+
+    // Register a User
+    // User puts in email and password
+    // final app = App(AppConfiguration("flutter-hfpbn"));
+    // EmailPasswordAuthProvider authProvider = EmailPasswordAuthProvider(app);
+    // await authProvider.registerUser(emailController.text, passwordController.text);
+
+    // // Login a User
+    // // Create an email/password credential with user's email and password
+    // final emailPwCredentials = Credentials.emailPassword(emailController.text, passwordController.text);
+    // await app.logIn(emailPwCredentials);
+
+    // // Send a confirmation email
+    // await authProvider.confirmUser(token, tokenId)
+
     // try creating user
-    try {
-      // check if password is confirmed
-      if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-      } else {
-        // show error message, passwords don't match
-        showErrorMessage("Passwords don't match");
-      }
-      // pop the loading circle
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      // pop the loading circle
-      Navigator.pop(context);
-      // show error message
-      showErrorMessage(e.code);
-    }
+    // try {
+    //   // check if password is confirmed
+    //   if (passwordController.text == confirmPasswordController.text) {
+    //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    //       email: emailController.text,
+    //       password: passwordController.text,
+    //     );
+    //   } else {
+    //     // show error message, passwords don't match
+    //     showErrorMessage("Passwords don't match");
+    //   }
+    //   // pop the loading circle
+    //   Navigator.pop(context);
+    // } on FirebaseAuthException catch (e) {
+    //   // pop the loading circle
+    //   Navigator.pop(context);
+    //   // show error message
+    //   showErrorMessage(e.code);
+    // }
   }
 
   // error message to user
