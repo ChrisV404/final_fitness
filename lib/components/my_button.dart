@@ -24,6 +24,7 @@ class MyButton extends StatelessWidget {
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16,
+              fontFamily: 'Poppins',
             ),
           ),
         ),
