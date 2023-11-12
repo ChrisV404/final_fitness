@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:final_fitness/components/my_button.dart';
 import 'package:final_fitness/components/my_textfield.dart';
 import 'package:final_fitness/components/square_tile.dart';
+import 'package:final_fitness/pages/forgot_password_page.dart';
 
 import '../api_service.dart';
 import 'package:final_fitness/user_model.dart';
@@ -50,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pop(context);
           showErrorMessage("Invalid email or password");
         }
-      } 
+      }
     } catch (e) {
       // pop the loading circle
       if (context.mounted) {
@@ -59,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
       // show error message
       showErrorMessage(e.toString());
     }
-
   }
 
   // error message to user
@@ -78,6 +78,16 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
     );
+  }
+
+  void forgotPassword() {
+    if (context.mounted) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ForgotPasswordPage(),
+          ));
+    }
   }
 
   @override
@@ -153,18 +163,21 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 10),
 
                   // forgot password?
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 25.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 27, 20, 162),
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins',
-                            fontSize: 15,
+                        GestureDetector(
+                          onTap: forgotPassword,
+                          child: const Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 27, 20, 162),
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins',
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                       ],
