@@ -3,6 +3,9 @@ import 'nutrition_page.dart';
 import 'workout_page.dart';
 import 'calendar_page.dart';
 import 'settings_page.dart';
+import 'package:final_fitness/components/metrics.dart';
+import 'package:final_fitness/components/small_metric.dart';
+import 'package:final_fitness/components/food_log.dart';
 
 class HomePage extends StatefulWidget {
   final String data;
@@ -14,28 +17,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 2;
+  List<String> foodList = [];
 
   // Sign user out method
   void signUserOut() {}
 
-  Widget nutritionPage() {
-    return NutritionPage();
-  }
-
-  Widget workoutPage() {
-    return WorkoutPage();
-  }
-
-  Widget calendarPage() {
-    return CalendarPage();
-  }
-
-  Widget settingsPage() {
-    return SettingsPage();
-  }
-
   @override
   Widget build(BuildContext context) {
+    foodList.add('Apple');
+    foodList.add('Banana');
+    foodList.add('Orange');
     return Scaffold(
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
@@ -92,34 +83,69 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        actions: [
-          IconButton(
-            onPressed: signUserOut,
-            icon: const Icon(Icons.logout),
-          )
-        ],
-      ),
       body: <Widget>[
-        nutritionPage(),
-        workoutPage(),
-        Container(
-          child: Center(
-            child: Text(
-              "Hi,: ${widget.data}",
-              style: const TextStyle(fontSize: 20),
+        NutritionPage(),
+        WorkoutPage(),
+        // Home Page
+        CustomScrollView(
+          slivers: <Widget>[
+            const SliverAppBar(
+              backgroundColor: Colors.white,
+              centerTitle: true,
+              title: Text(
+                'Final Fitness',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins',
+                ),
+              ),
             ),
-          ),
+            SliverList(
+              delegate: SliverChildListDelegate(<Widget>[
+                Container(
+                  margin: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+                  child: Text(
+                    "Hi, ${widget.data}",
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    "TODAY",
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ]),
+            ),
+            Metrics(),
+            smallerMetrics(),
+            FoodLog(foodList: foodList),
+            SliverList(
+              delegate: SliverChildListDelegate(<Widget>[
+                Container(
+                  height: 100,
+                ),
+              ])
+            )
+          ],
         ),
-        calendarPage(),
-        settingsPage(),
+        CalendarPage(),
+        SettingsPage(),
       ][currentPageIndex],
     );
   }
+
+  SliverList smallerMetrics() {
+    return SliverList(
+      delegate: SliverChildListDelegate(<Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [SmallMetric(), const SizedBox(width: 50), SmallMetric()],
+        )
+      ]),
+    );
+  }
 }
-// Center(
-      //     child: Text(
-      //   "LOGGED IN AS: ${widget.data}",
-      //   style: const TextStyle(fontSize: 20),
-      // )),
