@@ -28,61 +28,54 @@ class _HomePageState extends State<HomePage> {
     foodList.add('Banana');
     foodList.add('Orange');
     return Scaffold(
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          labelTextStyle: MaterialStateProperty.all(
-            TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Poppins',
-            ),
-          ),
-        ),
-        child: NavigationBar(
-          indicatorColor: const Color.fromARGB(0, 255, 255, 255),
-          animationDuration: Duration(milliseconds: 200),
-          backgroundColor: Color.fromARGB(255, 214, 213, 213),
-          destinations: [
-            NavigationDestination(
-              icon: Icon(Icons.fastfood, size: 30),
-              selectedIcon: Icon(Icons.fastfood,
-                  size: 30, color: Color.fromARGB(255, 240, 81, 57)),
-              label: 'Nutrition',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.fitness_center, size: 30),
-              selectedIcon: Icon(Icons.fitness_center,
-                  size: 30, color: Color.fromARGB(255, 240, 81, 57)),
-              label: 'Workout',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.home, size: 30),
-              selectedIcon: Icon(Icons.home,
-                  size: 30, color: Color.fromARGB(255, 240, 81, 57)),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.calendar_month, size: 30),
-              selectedIcon: Icon(Icons.calendar_month,
-                  size: 30, color: Color.fromARGB(255, 240, 81, 57)),
-              label: 'Calendar',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings, size: 30),
-              selectedIcon: Icon(Icons.settings,
-                  size: 30, color: Color.fromARGB(255, 240, 81, 57)),
-              label: 'Settings',
-            ),
-          ],
-          selectedIndex: currentPageIndex,
-          onDestinationSelected: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-        ),
-      ),
+      bottomNavigationBar: createNavigationBar(),
       backgroundColor: Colors.grey[300],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Show menu
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                height: 200,
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      leading: const Icon(Icons.fastfood),
+                      title: const Text('Food'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NutritionPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.fitness_center),
+                      title: const Text('Workout'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WorkoutPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+        backgroundColor: const Color.fromARGB(255, 240, 81, 57),
+        child: const Icon(Icons.add),
+      ),
       body: <Widget>[
         NutritionPage(),
         WorkoutPage(),
@@ -135,6 +128,63 @@ class _HomePageState extends State<HomePage> {
         CalendarPage(),
         SettingsPage(),
       ][currentPageIndex],
+    );
+  }
+
+  NavigationBarTheme createNavigationBar() {
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        labelTextStyle: MaterialStateProperty.all(
+          const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Poppins',
+          ),
+        ),
+      ),
+      child: NavigationBar(
+        indicatorColor: const Color.fromARGB(0, 255, 255, 255),
+        animationDuration: const Duration(milliseconds: 200),
+        backgroundColor: const Color.fromARGB(255, 214, 213, 213),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.fastfood, size: 30),
+            selectedIcon: Icon(Icons.fastfood,
+                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            label: 'Nutrition',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.fitness_center, size: 30),
+            selectedIcon: Icon(Icons.fitness_center,
+                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            label: 'Workout',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.home, size: 30),
+            selectedIcon: Icon(Icons.home,
+                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month, size: 30),
+            selectedIcon: Icon(Icons.calendar_month,
+                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            label: 'Calendar',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings, size: 30),
+            selectedIcon: Icon(Icons.settings,
+                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            label: 'Settings',
+          ),
+        ],
+        selectedIndex: currentPageIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+      ),
     );
   }
 

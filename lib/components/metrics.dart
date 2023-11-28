@@ -33,7 +33,7 @@ class _MetricsState extends State<Metrics> {
               borderRadius: BorderRadius.circular(12),
             ),
             elevation: 5,
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
             child: Column(
               children: [
                 const Row(
@@ -134,8 +134,8 @@ class _MetricsState extends State<Metrics> {
                     minHeight: 12,
                     borderRadius: BorderRadius.circular(20),
                     value: 0.5,
-                    backgroundColor: Color.fromARGB(255, 173, 217, 241),
-                    valueColor: AlwaysStoppedAnimation<Color>(
+                    backgroundColor: const Color.fromARGB(255, 173, 217, 241),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 57, 191, 240)),
                   ),
                 ),
@@ -174,8 +174,8 @@ class _MetricsState extends State<Metrics> {
                     minHeight: 12,
                     borderRadius: BorderRadius.circular(20),
                     value: 0.5,
-                    backgroundColor: Color.fromARGB(255, 198, 233, 195),
-                    valueColor: AlwaysStoppedAnimation<Color>(
+                    backgroundColor: const Color.fromARGB(255, 198, 233, 195),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 78, 240, 57)),
                   ),
                 ),
@@ -214,8 +214,8 @@ class _MetricsState extends State<Metrics> {
                     minHeight: 12,
                     borderRadius: BorderRadius.circular(20),
                     value: 0.5,
-                    backgroundColor: Color.fromARGB(255, 219, 195, 233),
-                    valueColor: AlwaysStoppedAnimation<Color>(
+                    backgroundColor: const Color.fromARGB(255, 219, 195, 233),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 186, 102, 236)),
                   ),
                 ),
