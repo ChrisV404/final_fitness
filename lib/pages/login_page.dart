@@ -23,6 +23,12 @@ class _LoginPageState extends State<LoginPage> {
 
   // sign user in method
   void signUserIn() async {
+    // check if all fields are filled
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      showErrorMessage("Please fill all fields");
+      return;
+    }
+
     // show loading circle
     showDialog(
       context: context,

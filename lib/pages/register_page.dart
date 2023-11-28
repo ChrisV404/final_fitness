@@ -23,6 +23,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // sign user up method
   void signUserUp() async {
+    // check if all fields are filled
+    if (firstNameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty) {
+      showErrorMessage("Please fill all fields");
+      return;
+    }
+
+    // if password is less than 8 characters
+    if (passwordController.text.length < 8) {
+      showErrorMessage("Password must be at least 8 characters");
+      return;
+    }
+
     // show loading circle
     showDialog(
       context: context,
@@ -46,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
         if (registerUsr != null) {
           // Obtain json from registerUsr string
           var jsonResponse = jsonDecode(registerUsr);
-          
+
           if (jsonResponse["inserted"] != -1) {
             Navigator.pop(context);
             Navigator.push(
@@ -118,7 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 50),
 
                   // create account
-                  Text(
+                  const Text(
                     'Create Account',
                     style: TextStyle(
                       color: Colors.black,
@@ -175,7 +190,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 50),
 
                   // or continue with
-                  Padding(
+                  const Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Row(
                       children: [
@@ -206,9 +221,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 50),
 
                   // google + apple sign in buttons
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       // google button
                       SquareTile(imagePath: 'lib/images/google.png'),
 
@@ -225,7 +240,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Already have an account?',
                         style: TextStyle(
                           color: Colors.black,

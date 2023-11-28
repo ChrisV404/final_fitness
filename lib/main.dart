@@ -15,9 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: true,
+        // colorScheme: ColorScheme.light(
+        //   primary: Colors.blue,
+        //   secondary: Colors.blue,
+        // ),
       ),
       debugShowCheckedModeBanner: false,
-      home: HomePage(data: 'Chris',), // replace with AuthPage() to see the login and register pages
+      home: AuthPage(), // replace with AuthPage() to see the login and register pages
     );
   }
 }
