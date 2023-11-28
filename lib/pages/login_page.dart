@@ -10,7 +10,7 @@ import 'package:final_fitness/user_model.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
-  LoginPage({super.key, required this.onTap});
+  const LoginPage({super.key, required this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -35,11 +35,11 @@ class _LoginPageState extends State<LoginPage> {
 
     // try sign in
     try {
-      User? usr = await ApiService()
+      var usr = await ApiService()
           .login(emailController.text, passwordController.text);
 
       if (context.mounted) {
-        if (usr != null) {
+        if (usr is User) {
           Navigator.pop(context);
           Navigator.push(
             context,
@@ -47,9 +47,9 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context) => HomePage(data: usr.info.firstName),
             ),
           );
-        } else {
+        } else { // if usr is not a User, then it is an error message
           Navigator.pop(context);
-          showErrorMessage("Invalid email or password");
+          showErrorMessage(usr);
         }
       }
     } catch (e) {
@@ -111,13 +111,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 50),
+                  const SizedBox(height: 50),
 
-                  // // logo
-                  // const Icon(
-                  //   Icons.lock,
-                  //   size: 100,
-                  // ),
                   const Text(
                     'Final Fitness',
                     style: TextStyle(
@@ -132,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 50),
 
                   // welcome back, you've been missed!
-                  Text(
+                  const Text(
                     'Welcome',
                     style: TextStyle(
                       color: Colors.black,
@@ -164,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   // forgot password?
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -195,8 +190,8 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 50),
 
                   // or continue with
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25.0),
                     child: Row(
                       children: [
                         Expanded(
@@ -206,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
                           child: Text(
                             'Or continue with',
                             style: TextStyle(
@@ -228,9 +223,9 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 50),
 
                   // google + apple sign in buttons
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       // google button
                       SquareTile(imagePath: 'lib/images/google.png'),
 
@@ -247,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Not a member?',
                         style: TextStyle(
                           color: Colors.black,
