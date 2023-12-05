@@ -1,9 +1,10 @@
 import 'dart:convert';
-
 import 'package:final_fitness/api_service.dart';
 import 'package:final_fitness/components/my_button.dart';
+import 'package:final_fitness/main.dart';
 import 'package:final_fitness/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -246,60 +247,114 @@ class _TrackersState extends State<Trackers> {
                     map['calories'] = "-1";
                   } else {
                     map['calories'] = calController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setCaloriesGoal(int.parse(calController.text));
+                    }
                   }
                 } else {
-                  map.remove('calories');
-                  calController.text = '';
+                  if (checkboxVal1 == false && calController.text != '') {
+                    showErrorMessage('Must Track Calories to Add Goal');
+                    return;
+                  } else {
+                    map.remove('calories');
+                    calController.text = '';
+                  }
                 }
                 if (checkboxVal2 == true) {
                   if (carbController.text == '') {
                     map['carbs'] = "-1";
                   } else {
                     map['carbs'] = carbController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setCarbsGoal(int.parse(carbController.text));
+                    }
                   }
                 } else {
-                  map.remove('carbs');
-                  carbController.text = '';
+                  if (checkboxVal2 == false && carbController.text != '') {
+                    showErrorMessage('Must Track Carbs to Add Goal');
+                    return;
+                  } else {
+                    map.remove('carbs');
+                    carbController.text = '';
+                  }
                 }
                 if (checkboxVal3 == true) {
                   if (fatController.text == '') {
                     map['fat'] = "-1";
                   } else {
                     map['fat'] = fatController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setFatGoal(int.parse(fatController.text));
+                    }
                   }
                 } else {
-                  map.remove('fat');
-                  fatController.text = '';
+                  if (checkboxVal3 == false && fatController.text != '') {
+                    showErrorMessage('Must Track Fat to Add Goal');
+                    return;
+                  } else {
+                    map.remove('fat');
+                    fatController.text = '';
+                  }
                 }
                 if (checkboxVal4 == true) {
                   if (proteinController.text == '') {
                     map['protein'] = "-1";
                   } else {
                     map['protein'] = proteinController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setProteinGoal(int.parse(proteinController.text));
+                    }
                   }
                 } else {
-                  map.remove('protein');
-                  proteinController.text = '';
+                  if (checkboxVal4 == false && proteinController.text != '') {
+                    showErrorMessage('Must Track Protein to Add Goal');
+                    return;
+                  } else {
+                    map.remove('protein');
+                    proteinController.text = '';
+                  }
                 }
                 if (checkboxVal5 == true) {
                   if (stepController.text == '') {
                     map['steps'] = "-1";
                   } else {
                     map['steps'] = stepController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setStepsGoal(int.parse(stepController.text));
+                    }
                   }
                 } else {
-                  map.remove('steps');
-                  stepController.text = '';
+                  if (checkboxVal5 == false && stepController.text != '') {
+                    showErrorMessage('Must Track Steps to Add Goal');
+                    return;
+                  } else {
+                    map.remove('steps');
+                    stepController.text = '';
+                  }
                 }
                 if (checkboxVal6 == true) {
                   if (waterController.text == '') {
                     map['water'] = "-1";
                   } else {
                     map['water'] = waterController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setWaterGoal(int.parse(waterController.text));
+                    }
                   }
                 } else {
-                  map.remove('water');
-                  waterController.text = '';
+                  if (checkboxVal6 == false && waterController.text != '') {
+                    showErrorMessage('Must Track Water to Add Goal');
+                    return;
+                  } else {
+                    map.remove('water');
+                    waterController.text = '';
+                  }
                 }
 
                 // Send tracked data to database
@@ -307,7 +362,7 @@ class _TrackersState extends State<Trackers> {
                   // Returns user with updated tracked data
                   var response = await ApiService().updateTracked(
                       widget.user.info.infoId, map, widget.user.token);
-                  
+
                   // Update token and tracked
                   var json = jsonDecode(response);
                   var accessToken = json["token"]["accessToken"];
@@ -327,6 +382,23 @@ class _TrackersState extends State<Trackers> {
               text: 'Update'),
         ],
       ),
+    );
+  }
+
+  void showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.deepPurple,
+          title: Center(
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
     );
   }
 }

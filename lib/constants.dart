@@ -4,4 +4,5 @@ class ApiConstants {
   static String registerEndpoint = "api/register";
   static String addConsumedItemEndpoint = "api/addConsumedItem";
   static String updateTrackedEndpoint = "api/updateTracked";
+  static String fetchConsumedEndpoint = "api/fetchConsumed";
 }
