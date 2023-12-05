@@ -1,10 +1,14 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:final_fitness/pages/home_page.dart';
 import 'package:final_fitness/pages/nutrition_page.dart';
+import 'package:final_fitness/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
-  CalendarPage({Key? key}) : super(key: key);
+  User usr;
+  CalendarPage({Key? key, required this.usr}) : super(key: key);
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();

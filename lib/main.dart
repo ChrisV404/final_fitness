@@ -7,12 +7,10 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => MetricData(),
-      child: const MyApp(),
-    )
-  );
+  runApp(ChangeNotifierProvider(
+    create: (context) => MetricData(),
+    child: const MyApp(),
+  ));
 }
 
 class MetricData with ChangeNotifier {
@@ -39,43 +37,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        // colorScheme: ColorScheme.light(
-        //   primary: Colors.blue,
-        //   secondary: Colors.blue,
-        // ),!
-      ),
-      debugShowCheckedModeBanner: false,
-      // replace all of this with just AuthPage() to home property to see the login and register pages // mocking a user for development
-      home: FutureBuilder<User?>(
-        future: usr(),
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // Show loading spinner while waiting
-          } else if (snapshot.hasError) {
-            return Text(
-                'Error: ${snapshot.error}'); // Show error message if something went wrong
-          } else if (snapshot.hasData) {
-            return HomePage(
-                usr: snapshot.data!); // Pass User object to HomePage
-          } else {
-            return Text('No data'); // Show message if no data
-          }
-        },
-      ),
-    );
+        theme: ThemeData(
+          useMaterial3: true,
+          // colorScheme: ColorScheme.light(
+          //   primary: Colors.blue,
+          //   secondary: Colors.blue,
+          // ),!
+        ),
+        debugShowCheckedModeBanner: false,
+        // replace all of this with just AuthPage() to home property to see the login and register pages // mocking a user for development
+        home: AuthPage());
   }
-}
-
-// Delete this after development of home page
-Future<User?> usr() async {
-  try {
-    var user =
-        await ApiService().login("christian.vqz3@gmail.com", "christian");
-    return user;
-  } catch (e) {
-    print(e);
-  }
-  return null;
 }

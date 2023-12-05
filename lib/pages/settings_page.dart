@@ -1,12 +1,16 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 
 import 'package:final_fitness/api_service.dart';
 import 'package:final_fitness/components/my_button.dart';
 import 'package:final_fitness/components/my_textfield.dart';
+import 'package:final_fitness/user_model.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage({Key? key}) : super(key: key);
+  User usr;
+  SettingsPage({Key? key, required this.usr}) : super(key: key);
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
