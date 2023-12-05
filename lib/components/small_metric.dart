@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class SmallMetric extends StatefulWidget {
-  SmallMetric({super.key});
+  SmallMetric(
+      {super.key,
+      required this.metricName,
+      required this.metricAmount,
+      required this.goal});
+  final String metricName;
+  int metricAmount = 0;
+  int goal = 0;
 
   @override
   State<SmallMetric> createState() => _SmallMetricState();
@@ -22,12 +29,12 @@ class _SmallMetricState extends State<SmallMetric> {
           height: 150,
           child: Column(
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    'Steps',
-                    style: TextStyle(
+                    widget.metricName,
+                    style: const TextStyle(
                       fontSize: 15,
                       fontFamily: 'Poppins',
                     ),
@@ -42,12 +49,12 @@ class _SmallMetricState extends State<SmallMetric> {
                     strokeCap: StrokeCap.round,
                     strokeAlign: 3,
                     strokeWidth: 12,
-                    value: 0.5,
+                    value: widget.metricAmount / widget.goal,
                     backgroundColor: Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
-                  const Text(
-                    '500',
+                  Text(
+                    widget.metricAmount.toString(),
                     style: TextStyle(
                       fontSize: 15,
                       fontFamily: 'Poppins',
@@ -56,8 +63,8 @@ class _SmallMetricState extends State<SmallMetric> {
                 ],
               ),
               const SizedBox(height: 25),
-              const Text(
-                'Goal: 5000',
+              Text(
+                'Goal: ${widget.goal}',
                 style: TextStyle(
                   fontSize: 13,
                   fontFamily: 'Poppins',

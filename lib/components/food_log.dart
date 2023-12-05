@@ -1,8 +1,9 @@
+import 'package:final_fitness/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 class FoodLog extends StatefulWidget {
   FoodLog({Key? key, required this.foodList}) : super(key: key);
-  final List<String> foodList;
+  final List<Item> foodList;
 
   @override
   State<FoodLog> createState() => _FoodLogState();
@@ -29,10 +30,9 @@ class _FoodLogState extends State<FoodLog> {
           );
   }
 
-  Dismissible firstOrLastItem(String item, int index, BuildContext context) {
-
+  Dismissible firstOrLastItem(Item item, int index, BuildContext context) {
     return Dismissible(
-      key: Key(item),
+      key: Key(UniqueKey().toString()),
       onDismissed: (direction) {
         // Remove the item from the data source.
         setState(() {
@@ -98,7 +98,8 @@ class _FoodLogState extends State<FoodLog> {
                       bottomLeft: Radius.circular(12),
                       bottomRight: Radius.circular(12)),
                 ),
-                title: Text(item),
+                title: Text(item.name!),
+                trailing: Text(item.calories!),
                 tileColor: Colors.grey,
               ),
               (index == 0) ? Divider(
@@ -113,9 +114,9 @@ class _FoodLogState extends State<FoodLog> {
     );
   }
 
-  Dismissible allOtherItems(String item, int index, BuildContext context) {
+  Dismissible allOtherItems(Item item, int index, BuildContext context) {
     return Dismissible(
-      key: Key(item),
+      key: Key(UniqueKey().toString()),
       onDismissed: (direction) {
         // Remove the item from the data source.
         setState(() {
@@ -162,7 +163,8 @@ class _FoodLogState extends State<FoodLog> {
             children: [
               ListTile(
                 shape: ContinuousRectangleBorder(),
-                title: Text(item),
+                title: Text(item.name!),
+                trailing: Text(item.calories!),
                 tileColor: Colors.grey,
               ),
               Divider(

@@ -12,17 +12,20 @@ class User {
   Info info;
   String error;
   int id;
+  String token;
 
   User({
     required this.info,
     required this.error,
     required this.id,
+    required this.token,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         info: Info.fromJson(json["info"]),
         error: json["error"],
         id: json["id"],
+        token: json["token"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -106,4 +109,30 @@ class Tracked {
         "carbs": carbs,
         "steps": steps,
       };
+
+  
+
+  // Method for adding a new goal
+  void addGoal(String goal, String value) {
+    switch (goal) {
+      case 'calories':
+        calories = value;
+        break;
+      case 'protein':
+        protein = value;
+        break;
+      case 'fat':
+        fat = value;
+        break;
+      case 'water':
+        water = value;
+        break;
+      case 'carbs':
+        carbs = value;
+        break;
+      case 'steps':
+        steps = value;
+        break;
+    }
+  }
 }
