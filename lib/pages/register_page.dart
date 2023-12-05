@@ -3,7 +3,6 @@ import 'package:final_fitness/components/my_button.dart';
 import 'package:final_fitness/components/my_textfield.dart';
 import 'package:final_fitness/components/square_tile.dart';
 import 'package:final_fitness/api_service.dart';
-import 'package:final_fitness/pages/home_page.dart';
 import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
@@ -64,12 +63,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
           if (jsonResponse["inserted"] != -1) {
             Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(data: firstNameController.text),
-              ),
-            );
+            widget.onTap!();
+            showErrorMessage(
+                "An email has been sent to your email address. Click the link to verify your account to login.");
           } else {
             Navigator.pop(context);
             showErrorMessage("Email already exists");

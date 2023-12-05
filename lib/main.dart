@@ -1,10 +1,36 @@
+import 'package:final_fitness/user_model.dart'; // delete after development of home page
 import 'package:flutter/material.dart';
 import 'package:final_fitness/pages/auth_page.dart';
 import 'package:final_fitness/pages/home_page.dart';
+import 'package:final_fitness/api_service.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => MetricData(),
+      child: const MyApp(),
+    )
+  );
+}
+
+class MetricData with ChangeNotifier {
+  int _waterAmount = 0;
+  int _stepsAmount = 0;
+
+  int get waterAmount => _waterAmount;
+  int get stepsAmount => _stepsAmount;
+
+  void incrementWater(int amount) {
+    _waterAmount += amount;
+    notifyListeners();
+  }
+
+  void incrementSteps(int amount) {
+    _stepsAmount += amount;
+    notifyListeners();
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -18,10 +44,38 @@ class MyApp extends StatelessWidget {
         // colorScheme: ColorScheme.light(
         //   primary: Colors.blue,
         //   secondary: Colors.blue,
-        // ),
+        // ),!
       ),
       debugShowCheckedModeBanner: false,
-      home: AuthPage(), // replace with AuthPage() to see the login and register pages
+      // replace all of this with just AuthPage() to home property to see the login and register pages // mocking a user for development
+      home: FutureBuilder<User?>(
+        future: usr(),
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // Show loading spinner while waiting
+          } else if (snapshot.hasError) {
+            return Text(
+                'Error: ${snapshot.error}'); // Show error message if something went wrong
+          } else if (snapshot.hasData) {
+            return HomePage(
+                usr: snapshot.data!); // Pass User object to HomePage
+          } else {
+            return Text('No data'); // Show message if no data
+          }
+        },
+      ),
     );
   }
+}
+
+// Delete this after development of home page
+Future<User?> usr() async {
+  try {
+    var user =
+        await ApiService().login("christian.vqz3@gmail.com", "christian");
+    return user;
+  } catch (e) {
+    print(e);
+  }
+  return null;
 }

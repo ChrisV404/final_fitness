@@ -24,8 +24,10 @@ class ApiService {
         if (json["id"] == -1) {
           return json['error'];
         } else {
+          var accessToken = json["token"]["accessToken"];
           var info = JwtDecoder.decode(json["token"]["accessToken"]);
           json["info"] = info;
+          json["token"] = accessToken;
           User usr = User.fromJson(json);
           return usr;
         }
@@ -56,6 +58,68 @@ class ApiService {
       if (response.statusCode == 200) {
         var jsonResponse = response.body;
         log(jsonResponse);
+        return jsonResponse;
+      } else {
+        log('Request failed with status: ${response.statusCode}.');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  // Add consumed item
+  Future addConsumedItem(userId, date, item, accessToken) async {
+    try {
+      var url = Uri.parse(
+          ApiConstants.baseUrl + ApiConstants.addConsumedItemEndpoint);
+      var response = await http.post(url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            "userId": userId,
+            "date": date,
+            "item": item,
+            "accessToken": accessToken
+          }));
+      if (response.statusCode == 200) {
+        var jsonResponse = response.body;
+        log(jsonResponse);
+        return jsonResponse;
+      } else {
+        log('Request failed with status: ${response.statusCode}.');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  Future updateTracked(userId, tracked, accessToken) async {
+    try {
+      var url =
+          Uri.parse(ApiConstants.baseUrl + ApiConstants.updateTrackedEndpoint);
+      var response = await http.post(url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            "userId": userId,
+            "tracked": tracked,
+            "accessToken": accessToken
+          }));
+      if (response.statusCode == 200) {
+        var jsonResponse = response.body;
+        log(jsonResponse);
+
+        // var json = jsonDecode(jsonResponse);
+        // var accessToken = json["token"]["accessToken"];
+        // var info = JwtDecoder.decode(json["token"]["accessToken"]);
+        // json["info"] = info;
+        // json["token"] = accessToken;
+        // User usr = User.fromJson(json);
+        // return usr;
         return jsonResponse;
       } else {
         log('Request failed with status: ${response.statusCode}.');

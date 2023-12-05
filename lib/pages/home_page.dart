@@ -1,4 +1,13 @@
+import 'dart:convert';
+
+import 'package:final_fitness/api_service.dart';
+import 'package:final_fitness/components/my_button.dart';
+import 'package:final_fitness/components/my_textfield.dart';
+import 'package:final_fitness/components/trackers.dart';
+import 'package:final_fitness/main.dart';
+import 'package:final_fitness/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'nutrition_page.dart';
 import 'workout_page.dart';
 import 'calendar_page.dart';
@@ -7,9 +16,43 @@ import 'package:final_fitness/components/metrics.dart';
 import 'package:final_fitness/components/small_metric.dart';
 import 'package:final_fitness/components/food_log.dart';
 
+// TODO: Implement metrics
+
+class Item {
+  // extract this class to a separate file (like user_model.dart)
+  String? time;
+  String? type;
+  String? name;
+  String? calories;
+  String? protein;
+  String? fat;
+  String? carbs;
+
+  Item({
+    this.time,
+    this.type,
+    this.name,
+    this.calories,
+    this.protein,
+    this.fat,
+    this.carbs,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "time": time,
+        "type": type,
+        "name": name,
+        "calories": calories,
+        "fat": fat,
+        "protein": protein,
+        "carbs": carbs,
+      };
+}
+
+// ignore: must_be_immutable
 class HomePage extends StatefulWidget {
-  final String data;
-  HomePage({super.key, required this.data});
+  User usr;
+  HomePage({super.key, required this.usr});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,65 +60,289 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 2;
-  List<String> foodList = [];
+  List<Item> foodList = [];
+  final nameController = TextEditingController();
+  final calController = TextEditingController();
+  final carbController = TextEditingController();
+  final fatController = TextEditingController();
+  final proteinController = TextEditingController();
+  final waterController = TextEditingController();
+  final stepsController = TextEditingController();
 
   // Sign user out method
   void signUserOut() {}
 
+  void callback(User user) {
+    widget.usr = user;
+  }
+
   @override
   Widget build(BuildContext context) {
-    foodList.add('Apple');
-    foodList.add('Banana');
-    foodList.add('Orange');
     return Scaffold(
       bottomNavigationBar: createNavigationBar(),
       backgroundColor: Colors.grey[300],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Show menu
-          showModalBottomSheet(
-            context: context,
-            builder: (BuildContext context) {
-              return Container(
-                height: 200,
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    ListTile(
-                      leading: const Icon(Icons.fastfood),
-                      title: const Text('Food'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NutritionPage(),
+      floatingActionButton: (currentPageIndex != 2)
+          ? null
+          : FloatingActionButton(
+              onPressed: () {
+                // Show menu
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      height: 300,
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: const Icon(Icons.fastfood),
+                            title: const Text('Add Food'),
+                            onTap: () {
+                              showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel: 'Close',
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Container(
+                                        height: 600,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              'Add Food Item',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins'),
+                                            ),
+                                            MyTextField(
+                                                controller: nameController,
+                                                hintText: 'Enter Name',
+                                                obscureText: false),
+                                            MyTextField(
+                                                controller: calController,
+                                                hintText: 'Enter Calories',
+                                                obscureText: false),
+                                            MyTextField(
+                                                controller: carbController,
+                                                hintText: 'Enter Carbs',
+                                                obscureText: false),
+                                            MyTextField(
+                                                controller: fatController,
+                                                hintText: 'Enter Fat',
+                                                obscureText: false),
+                                            MyTextField(
+                                                controller: proteinController,
+                                                hintText: 'Enter Protein',
+                                                obscureText: false),
+                                            MyButton(
+                                                onTap: () {
+                                                  DateTime now = DateTime.now();
+                                                  String formattedTime =
+                                                      '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
+                                                  var item = Item(
+                                                    time: formattedTime,
+                                                    type: 'food',
+                                                    name: nameController.text,
+                                                    calories:
+                                                        calController.text,
+                                                    protein:
+                                                        proteinController.text,
+                                                    fat: fatController.text,
+                                                    carbs: carbController.text,
+                                                  );
+
+                                                  setState(() {
+                                                    foodList.add(item);
+                                                  });
+
+                                                  // Call API to add food to database
+                                                  String formattedDate =
+                                                      '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+                                                  addFoodItem(
+                                                      widget.usr.info.infoId,
+                                                      formattedDate,
+                                                      item.toJson(),
+                                                      widget.usr.token);
+                                                  Navigator.pop(context);
+                                                },
+                                                text: 'Add Food'),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            },
                           ),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.fitness_center),
-                      title: const Text('Workout'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WorkoutPage(),
+                          ListTile(
+                            leading: const Icon(Icons.water_drop),
+                            title: const Text('Add Water'),
+                            onTap: () {
+                              showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel: 'Close',
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Container(
+                                        height: 200,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              'Add Water',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins'),
+                                            ),
+                                            MyTextField(
+                                                controller: waterController,
+                                                hintText: 'Enter amount',
+                                                obscureText: false),
+                                            MyButton(
+                                                onTap: () {
+                                                  DateTime now = DateTime.now();
+                                                  String formattedTime =
+                                                      '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
+
+                                                  var waterObj = {
+                                                    "time": formattedTime,
+                                                    "type": "water",
+                                                    "amount":
+                                                        waterController.text
+                                                  };
+
+                                                  // Add water object to foodList
+                                                  String formattedDate =
+                                                      '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+                                                  addFoodItem(
+                                                      widget.usr.info.infoId,
+                                                      formattedDate,
+                                                      waterObj,
+                                                      widget.usr.token);
+                                                  // Update water amount
+                                                  Provider.of<MetricData>(
+                                                          context,
+                                                          listen: false)
+                                                      .incrementWater(int.parse(
+                                                          waterController
+                                                              .text));
+                                                  Navigator.pop(context);
+                                                },
+                                                text: 'Add Water'),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-        backgroundColor: const Color.fromARGB(255, 240, 81, 57),
-        child: const Icon(Icons.add),
-      ),
+                          ListTile(
+                            leading: const Icon(Icons.directions_walk),
+                            title: const Text('Add Steps'),
+                            onTap: () {
+                              showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel: 'Close',
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Container(
+                                        height: 200,
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              'Add Steps',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins'),
+                                            ),
+                                            MyTextField(
+                                                controller: stepsController,
+                                                hintText: 'Enter amount',
+                                                obscureText: false),
+                                            MyButton(
+                                                onTap: () {
+                                                  DateTime now = DateTime.now();
+
+                                                  var stepObj = {
+                                                    "time": "-",
+                                                    "type": "steps",
+                                                    "amount":
+                                                        stepsController.text
+                                                  };
+
+                                                  // Add water object to foodList
+                                                  String formattedDate =
+                                                      '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+                                                  addFoodItem(
+                                                      widget.usr.info.infoId,
+                                                      formattedDate,
+                                                      stepObj,
+                                                      widget.usr.token);
+                                                  // Update water amount
+                                                  Provider.of<MetricData>(
+                                                          context,
+                                                          listen: false)
+                                                      .incrementSteps(int.parse(
+                                                          stepsController
+                                                              .text));
+                                                  Navigator.pop(context);
+                                                },
+                                                text: 'Add Water'),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.update),
+                            title: const Text('Modify Trackers and Goals'),
+                            onTap: () {
+                              showGeneralDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  barrierLabel: 'Close',
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Trackers(
+                                          user: widget.usr, callback: callback),
+                                    );
+                                  });
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              backgroundColor: const Color.fromARGB(255, 240, 81, 57),
+              child: const Icon(Icons.add),
+            ),
       body: <Widget>[
         NutritionPage(),
         WorkoutPage(),
@@ -100,7 +367,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   margin: const EdgeInsets.fromLTRB(20, 10, 20, 30),
                   child: Text(
-                    "Hi, ${widget.data}",
+                    "Hi, ${widget.usr.info.firstName}",
                     style: const TextStyle(fontSize: 15),
                   ),
                 ),
@@ -117,18 +384,30 @@ class _HomePageState extends State<HomePage> {
             smallerMetrics(),
             FoodLog(foodList: foodList),
             SliverList(
-              delegate: SliverChildListDelegate(<Widget>[
-                Container(
-                  height: 100,
-                ),
-              ])
-            )
+                delegate: SliverChildListDelegate(<Widget>[
+              Container(
+                height: 100,
+              ),
+            ]))
           ],
         ),
         CalendarPage(),
         SettingsPage(),
       ][currentPageIndex],
     );
+  }
+
+  // Might need to extract info value from response (which contains all consumed items from a specific date/dates)
+  void addFoodItem(userId, date, item, accessToken) async {
+    try {
+      var response =
+          await ApiService().addConsumedItem(userId, date, item, accessToken);
+      // Replace user's token with incoming token in response
+      var obj = json.decode(response);
+      widget.usr.token = obj['token']['accessToken'];
+    } catch (e) {
+      print(e);
+    }
   }
 
   NavigationBarTheme createNavigationBar() {
@@ -193,7 +472,20 @@ class _HomePageState extends State<HomePage> {
       delegate: SliverChildListDelegate(<Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [SmallMetric(), const SizedBox(width: 50), SmallMetric()],
+          children: [
+            SmallMetric(
+              metricName: 'Steps',
+              metricAmount:
+                  Provider.of<MetricData>(context, listen: true).stepsAmount,
+              goal: 10000,
+            ),
+            const SizedBox(width: 50),
+            SmallMetric(
+                metricName: 'Water',
+                metricAmount:
+                    Provider.of<MetricData>(context, listen: true).waterAmount,
+                goal: 5000)
+          ],
         )
       ]),
     );
