@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:final_fitness/api_service.dart';
 import 'package:final_fitness/components/my_button.dart';
 import 'package:final_fitness/user_model.dart';
@@ -248,8 +247,13 @@ class _TrackersState extends State<Trackers> {
                     map['calories'] = calController.text;
                   }
                 } else {
-                  map.remove('calories');
-                  calController.text = '';
+                  if (checkboxVal1 == false && calController.text != '') {
+                    showErrorMessage('Must Track Calories to Add Goal');
+                    return;
+                  } else {
+                    map.remove('calories');
+                    calController.text = '';
+                  }
                 }
                 if (checkboxVal2 == true) {
                   if (carbController.text == '') {
@@ -258,8 +262,13 @@ class _TrackersState extends State<Trackers> {
                     map['carbs'] = carbController.text;
                   }
                 } else {
-                  map.remove('carbs');
-                  carbController.text = '';
+                  if (checkboxVal2 == false && carbController.text != '') {
+                    showErrorMessage('Must Track Carbs to Add Goal');
+                    return;
+                  } else {
+                    map.remove('carbs');
+                    carbController.text = '';
+                  }
                 }
                 if (checkboxVal3 == true) {
                   if (fatController.text == '') {
@@ -268,8 +277,13 @@ class _TrackersState extends State<Trackers> {
                     map['fat'] = fatController.text;
                   }
                 } else {
-                  map.remove('fat');
-                  fatController.text = '';
+                  if (checkboxVal3 == false && fatController.text != '') {
+                    showErrorMessage('Must Track Fat to Add Goal');
+                    return;
+                  } else {
+                    map.remove('fat');
+                    fatController.text = '';
+                  }
                 }
                 if (checkboxVal4 == true) {
                   if (proteinController.text == '') {
@@ -278,8 +292,13 @@ class _TrackersState extends State<Trackers> {
                     map['protein'] = proteinController.text;
                   }
                 } else {
-                  map.remove('protein');
-                  proteinController.text = '';
+                  if (checkboxVal4 == false && proteinController.text != '') {
+                    showErrorMessage('Must Track Protein to Add Goal');
+                    return;
+                  } else {
+                    map.remove('protein');
+                    proteinController.text = '';
+                  }
                 }
                 if (checkboxVal5 == true) {
                   if (stepController.text == '') {
@@ -288,8 +307,13 @@ class _TrackersState extends State<Trackers> {
                     map['steps'] = stepController.text;
                   }
                 } else {
-                  map.remove('steps');
-                  stepController.text = '';
+                  if (checkboxVal5 == false && stepController.text != '') {
+                    showErrorMessage('Must Track Steps to Add Goal');
+                    return;
+                  } else {
+                    map.remove('steps');
+                    stepController.text = '';
+                  }
                 }
                 if (checkboxVal6 == true) {
                   if (waterController.text == '') {
@@ -298,8 +322,13 @@ class _TrackersState extends State<Trackers> {
                     map['water'] = waterController.text;
                   }
                 } else {
-                  map.remove('water');
-                  waterController.text = '';
+                  if (checkboxVal6 == false && waterController.text != '') {
+                    showErrorMessage('Must Track Water to Add Goal');
+                    return;
+                  } else {
+                    map.remove('water');
+                    waterController.text = '';
+                  }
                 }
 
                 // Send tracked data to database
@@ -307,7 +336,7 @@ class _TrackersState extends State<Trackers> {
                   // Returns user with updated tracked data
                   var response = await ApiService().updateTracked(
                       widget.user.info.infoId, map, widget.user.token);
-                  
+
                   // Update token and tracked
                   var json = jsonDecode(response);
                   var accessToken = json["token"]["accessToken"];
@@ -327,6 +356,23 @@ class _TrackersState extends State<Trackers> {
               text: 'Update'),
         ],
       ),
+    );
+  }
+
+  void showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.deepPurple,
+          title: Center(
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
     );
   }
 }
