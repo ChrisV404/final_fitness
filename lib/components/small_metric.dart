@@ -1,4 +1,6 @@
+import 'package:final_fitness/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class SmallMetric extends StatefulWidget {
@@ -8,8 +10,8 @@ class SmallMetric extends StatefulWidget {
       required this.metricAmount,
       required this.goal});
   final String metricName;
-  int metricAmount = 0;
-  int goal = 0;
+  int metricAmount;
+  dynamic goal;
 
   @override
   State<SmallMetric> createState() => _SmallMetricState();
@@ -50,9 +52,9 @@ class _SmallMetricState extends State<SmallMetric> {
                     strokeCap: StrokeCap.round,
                     strokeAlign: 3,
                     strokeWidth: 12,
-                    value: widget.metricAmount / widget.goal,
+                    value: (widget.goal is int) ? widget.metricAmount / widget.goal : 0,
                     backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    valueColor: (widget.goal == "-") ? const AlwaysStoppedAnimation<Color>(Colors.grey) : const AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
                   Text(
                     widget.metricAmount.toString(),

@@ -18,9 +18,13 @@ void main() async {
 class MetricData with ChangeNotifier {
   int _waterAmount = 0;
   int _stepsAmount = 0;
+  dynamic _waterGoal = "-";
+  dynamic _stepsGoal = "-";
 
   int get waterAmount => _waterAmount;
   int get stepsAmount => _stepsAmount;
+  dynamic get waterGoal => _waterGoal;
+  dynamic get stepsGoal => _stepsGoal;
 
   void incrementWater(int amount) {
     _waterAmount += amount;
@@ -29,6 +33,16 @@ class MetricData with ChangeNotifier {
 
   void incrementSteps(int amount) {
     _stepsAmount += amount;
+    notifyListeners();
+  }
+
+  void setWaterGoal(int goal) {
+    _waterGoal = goal;
+    notifyListeners();
+  }
+
+  void setStepsGoal(int goal) {
+    _stepsGoal = goal;
     notifyListeners();
   }
 }

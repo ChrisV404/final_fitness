@@ -266,7 +266,7 @@ class _HomePageState extends State<HomePage> {
                                         height: 200,
                                         child: Column(
                                           children: <Widget>[
-                                            Text(
+                                            const Text(
                                               'Add Steps',
                                               style: TextStyle(
                                                   fontSize: 20,
@@ -288,7 +288,6 @@ class _HomePageState extends State<HomePage> {
                                                         stepsController.text
                                                   };
 
-                                                  // Add water object to foodList
                                                   String formattedDate =
                                                       '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
                                                   addFoodItem(
@@ -296,7 +295,8 @@ class _HomePageState extends State<HomePage> {
                                                       formattedDate,
                                                       stepObj,
                                                       widget.usr.token);
-                                                  // Update water amount
+
+                                                  // Update steps amount
                                                   Provider.of<MetricData>(
                                                           context,
                                                           listen: false)
@@ -305,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                                                               .text));
                                                   Navigator.pop(context);
                                                 },
-                                                text: 'Add Water'),
+                                                text: 'Add Steps'),
                                           ],
                                         ),
                                       ),
@@ -477,14 +477,16 @@ class _HomePageState extends State<HomePage> {
               metricName: 'Steps',
               metricAmount:
                   Provider.of<MetricData>(context, listen: true).stepsAmount,
-              goal: 10000,
+              goal: Provider.of<MetricData>(context, listen: true).stepsGoal, // supposed to be an int
             ),
             const SizedBox(width: 50),
             SmallMetric(
                 metricName: 'Water',
                 metricAmount:
                     Provider.of<MetricData>(context, listen: true).waterAmount,
-                goal: 5000)
+                goal: Provider.of<MetricData>(context, listen: true)
+                    .waterGoal // supposed to be an int
+            ),
           ],
         )
       ]),

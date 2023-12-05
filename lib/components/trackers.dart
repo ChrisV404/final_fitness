@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:final_fitness/api_service.dart';
 import 'package:final_fitness/components/my_button.dart';
+import 'package:final_fitness/main.dart';
 import 'package:final_fitness/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -305,6 +307,10 @@ class _TrackersState extends State<Trackers> {
                     map['steps'] = "-1";
                   } else {
                     map['steps'] = stepController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setStepsGoal(int.parse(stepController.text));
+                    }
                   }
                 } else {
                   if (checkboxVal5 == false && stepController.text != '') {
@@ -320,6 +326,10 @@ class _TrackersState extends State<Trackers> {
                     map['water'] = "-1";
                   } else {
                     map['water'] = waterController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setWaterGoal(int.parse(waterController.text));
+                    }
                   }
                 } else {
                   if (checkboxVal6 == false && waterController.text != '') {
