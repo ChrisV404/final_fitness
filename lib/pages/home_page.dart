@@ -171,6 +171,7 @@ class _HomePageState extends State<HomePage> {
                                                       widget.usr.token);
 
                                                   // Update food macros in UI
+                                                  // TODO: Allow user to leave some fields blank
                                                   Provider.of<MetricData>(context,listen: false).incrementCalories(int.parse(calController.text));
                                                   Provider.of<MetricData>(context,listen: false).incrementCarbs(int.parse(carbController.text));
                                                   Provider.of<MetricData>(context,listen: false).incrementFat(int.parse(fatController.text));
