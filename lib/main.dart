@@ -7,12 +7,10 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => MetricData(),
-      child: const MyApp(),
-    )
-  );
+  runApp(ChangeNotifierProvider(
+    create: (context) => MetricData(),
+    child: const MyApp(),
+  ));
 }
 
 // Export class to another file for better organization
@@ -45,7 +43,6 @@ class MetricData with ChangeNotifier {
   dynamic get waterGoal => _waterGoal;
   dynamic get stepsGoal => _stepsGoal;
 
-
   void incrementCalories(int amount) {
     _calories += amount;
     notifyListeners();
@@ -65,7 +62,7 @@ class MetricData with ChangeNotifier {
     _protein += amount;
     notifyListeners();
   }
-  
+
   void incrementWater(int amount) {
     _waterAmount += amount;
     notifyListeners();

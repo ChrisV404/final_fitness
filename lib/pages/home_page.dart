@@ -16,8 +16,6 @@ import 'package:final_fitness/components/metrics.dart';
 import 'package:final_fitness/components/small_metric.dart';
 import 'package:final_fitness/components/food_log.dart';
 
-// TODO: Implement metrics
-
 class Item {
   // extract this class to a separate file (like user_model.dart)
   String? time;
@@ -102,13 +100,11 @@ class _HomePageState extends State<HomePage> {
                                   context: context,
                                   barrierDismissible: true,
                                   barrierLabel: 'Close',
-                                  pageBuilder: (BuildContext context,
-                                      Animation<double> animation,
+                                  pageBuilder: (BuildContext context, Animation<double> animation,
                                       Animation<double> secondaryAnimation) {
                                     return Dialog(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
+                                          borderRadius: BorderRadius.circular(20)),
                                       child: Container(
                                         height: 600,
                                         child: Column(
@@ -142,6 +138,12 @@ class _HomePageState extends State<HomePage> {
                                                 obscureText: false),
                                             MyButton(
                                                 onTap: () {
+                                                  // First check if name field was ommitted
+                                                  if (nameController.text == "") {
+                                                    showErrorMessage(
+                                                        "Please enter a name for the food item");
+                                                    return;
+                                                  }
                                                   DateTime now = DateTime.now();
                                                   String formattedTime =
                                                       '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
@@ -149,12 +151,18 @@ class _HomePageState extends State<HomePage> {
                                                     time: formattedTime,
                                                     type: 'food',
                                                     name: nameController.text,
-                                                    calories:
-                                                        calController.text,
-                                                    protein:
-                                                        proteinController.text,
-                                                    fat: fatController.text,
-                                                    carbs: carbController.text,
+                                                    calories: (calController.text == "")
+                                                        ? "-1"
+                                                        : calController.text,
+                                                    protein: (proteinController.text == "")
+                                                        ? "-1"
+                                                        : proteinController.text,
+                                                    fat: (fatController.text == "")
+                                                        ? "-1"
+                                                        : fatController.text,
+                                                    carbs: (carbController.text == "")
+                                                        ? "-1"
+                                                        : carbController.text,
                                                   );
 
                                                   setState(() {
@@ -164,18 +172,30 @@ class _HomePageState extends State<HomePage> {
                                                   // Call API to add food to database
                                                   String formattedDate =
                                                       '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
-                                                  addFoodItem(
-                                                      widget.usr.info.infoId,
-                                                      formattedDate,
-                                                      item.toJson(),
-                                                      widget.usr.token);
+                                                  addFoodItem(widget.usr.info.infoId, formattedDate,
+                                                      item.toJson(), widget.usr.token);
 
                                                   // Update food macros in UI
-                                                  // TODO: Allow user to leave some fields blank
-                                                  Provider.of<MetricData>(context,listen: false).incrementCalories(int.parse(calController.text));
-                                                  Provider.of<MetricData>(context,listen: false).incrementCarbs(int.parse(carbController.text));
-                                                  Provider.of<MetricData>(context,listen: false).incrementFat(int.parse(fatController.text));
-                                                  Provider.of<MetricData>(context,listen: false).incrementProtein(int.parse(proteinController.text));
+                                                  if (calController.text != "") {
+                                                    Provider.of<MetricData>(context, listen: false)
+                                                        .incrementCalories(
+                                                            int.parse(calController.text));
+                                                  }
+                                                  if (carbController.text != "") {
+                                                    Provider.of<MetricData>(context, listen: false)
+                                                        .incrementCarbs(
+                                                            int.parse(carbController.text));
+                                                  }
+                                                  if (fatController.text != "") {
+                                                    Provider.of<MetricData>(context, listen: false)
+                                                        .incrementFat(
+                                                            int.parse(fatController.text));
+                                                  }
+                                                  if (proteinController.text != "") {
+                                                    Provider.of<MetricData>(context, listen: false)
+                                                        .incrementProtein(
+                                                            int.parse(proteinController.text));
+                                                  }
 
                                                   Navigator.pop(context);
                                                 },
@@ -195,13 +215,11 @@ class _HomePageState extends State<HomePage> {
                                   context: context,
                                   barrierDismissible: true,
                                   barrierLabel: 'Close',
-                                  pageBuilder: (BuildContext context,
-                                      Animation<double> animation,
+                                  pageBuilder: (BuildContext context, Animation<double> animation,
                                       Animation<double> secondaryAnimation) {
                                     return Dialog(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
+                                          borderRadius: BorderRadius.circular(20)),
                                       child: Container(
                                         height: 200,
                                         child: Column(
@@ -226,25 +244,18 @@ class _HomePageState extends State<HomePage> {
                                                   var waterObj = {
                                                     "time": formattedTime,
                                                     "type": "water",
-                                                    "amount":
-                                                        waterController.text
+                                                    "amount": waterController.text
                                                   };
 
                                                   // Add water object to foodList
                                                   String formattedDate =
                                                       '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
-                                                  addFoodItem(
-                                                      widget.usr.info.infoId,
-                                                      formattedDate,
-                                                      waterObj,
-                                                      widget.usr.token);
+                                                  addFoodItem(widget.usr.info.infoId, formattedDate,
+                                                      waterObj, widget.usr.token);
                                                   // Update water amount
-                                                  Provider.of<MetricData>(
-                                                          context,
-                                                          listen: false)
-                                                      .incrementWater(int.parse(
-                                                          waterController
-                                                              .text));
+                                                  Provider.of<MetricData>(context, listen: false)
+                                                      .incrementWater(
+                                                          int.parse(waterController.text));
                                                   Navigator.pop(context);
                                                 },
                                                 text: 'Add Water'),
@@ -263,13 +274,11 @@ class _HomePageState extends State<HomePage> {
                                   context: context,
                                   barrierDismissible: true,
                                   barrierLabel: 'Close',
-                                  pageBuilder: (BuildContext context,
-                                      Animation<double> animation,
+                                  pageBuilder: (BuildContext context, Animation<double> animation,
                                       Animation<double> secondaryAnimation) {
                                     return Dialog(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
+                                          borderRadius: BorderRadius.circular(20)),
                                       child: Container(
                                         height: 200,
                                         child: Column(
@@ -292,25 +301,18 @@ class _HomePageState extends State<HomePage> {
                                                   var stepObj = {
                                                     "time": "-",
                                                     "type": "steps",
-                                                    "amount":
-                                                        stepsController.text
+                                                    "amount": stepsController.text
                                                   };
 
                                                   String formattedDate =
                                                       '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
-                                                  addFoodItem(
-                                                      widget.usr.info.infoId,
-                                                      formattedDate,
-                                                      stepObj,
-                                                      widget.usr.token);
+                                                  addFoodItem(widget.usr.info.infoId, formattedDate,
+                                                      stepObj, widget.usr.token);
 
                                                   // Update steps amount
-                                                  Provider.of<MetricData>(
-                                                          context,
-                                                          listen: false)
-                                                      .incrementSteps(int.parse(
-                                                          stepsController
-                                                              .text));
+                                                  Provider.of<MetricData>(context, listen: false)
+                                                      .incrementSteps(
+                                                          int.parse(stepsController.text));
                                                   Navigator.pop(context);
                                                 },
                                                 text: 'Add Steps'),
@@ -329,15 +331,12 @@ class _HomePageState extends State<HomePage> {
                                   context: context,
                                   barrierDismissible: true,
                                   barrierLabel: 'Close',
-                                  pageBuilder: (BuildContext context,
-                                      Animation<double> animation,
+                                  pageBuilder: (BuildContext context, Animation<double> animation,
                                       Animation<double> secondaryAnimation) {
                                     return Dialog(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: Trackers(
-                                          user: widget.usr, callback: callback),
+                                          borderRadius: BorderRadius.circular(20)),
+                                      child: Trackers(user: widget.usr, callback: callback),
                                     );
                                   });
                             },
@@ -382,8 +381,7 @@ class _HomePageState extends State<HomePage> {
                 Center(
                   child: Text(
                     "TODAY",
-                    style: const TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                 ),
               ]),
@@ -408,8 +406,7 @@ class _HomePageState extends State<HomePage> {
   // Might need to extract info value from response (which contains all consumed items from a specific date/dates)
   void addFoodItem(userId, date, item, accessToken) async {
     try {
-      var response =
-          await ApiService().addConsumedItem(userId, date, item, accessToken);
+      var response = await ApiService().addConsumedItem(userId, date, item, accessToken);
       // Replace user's token with incoming token in response
       var obj = json.decode(response);
       widget.usr.token = obj['token']['accessToken'];
@@ -436,32 +433,29 @@ class _HomePageState extends State<HomePage> {
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.fastfood, size: 30),
-            selectedIcon: Icon(Icons.fastfood,
-                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            selectedIcon: Icon(Icons.fastfood, size: 30, color: Color.fromARGB(255, 240, 81, 57)),
             label: 'Nutrition',
           ),
           NavigationDestination(
             icon: Icon(Icons.fitness_center, size: 30),
-            selectedIcon: Icon(Icons.fitness_center,
-                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            selectedIcon:
+                Icon(Icons.fitness_center, size: 30, color: Color.fromARGB(255, 240, 81, 57)),
             label: 'Workout',
           ),
           NavigationDestination(
             icon: Icon(Icons.home, size: 30),
-            selectedIcon: Icon(Icons.home,
-                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            selectedIcon: Icon(Icons.home, size: 30, color: Color.fromARGB(255, 240, 81, 57)),
             label: 'Home',
           ),
           NavigationDestination(
             icon: Icon(Icons.calendar_month, size: 30),
-            selectedIcon: Icon(Icons.calendar_month,
-                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            selectedIcon:
+                Icon(Icons.calendar_month, size: 30, color: Color.fromARGB(255, 240, 81, 57)),
             label: 'Calendar',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings, size: 30),
-            selectedIcon: Icon(Icons.settings,
-                size: 30, color: Color.fromARGB(255, 240, 81, 57)),
+            selectedIcon: Icon(Icons.settings, size: 30, color: Color.fromARGB(255, 240, 81, 57)),
             label: 'Settings',
           ),
         ],
@@ -483,22 +477,37 @@ class _HomePageState extends State<HomePage> {
           children: [
             SmallMetric(
               metricName: 'Steps',
-              metricAmount:
-                  Provider.of<MetricData>(context, listen: true).stepsAmount,
-              goal: Provider.of<MetricData>(context, listen: true)
-                  .stepsGoal, // supposed to be an int
+              metricAmount: Provider.of<MetricData>(context, listen: true).stepsAmount,
+              goal:
+                  Provider.of<MetricData>(context, listen: true).stepsGoal, // supposed to be an int
             ),
             const SizedBox(width: 50),
             SmallMetric(
                 metricName: 'Water',
-                metricAmount:
-                    Provider.of<MetricData>(context, listen: true).waterAmount,
+                metricAmount: Provider.of<MetricData>(context, listen: true).waterAmount,
                 goal: Provider.of<MetricData>(context, listen: true)
                     .waterGoal // supposed to be an int
                 ),
           ],
         )
       ]),
+    );
+  }
+
+  void showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.deepPurple,
+          title: Center(
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
     );
   }
 }
