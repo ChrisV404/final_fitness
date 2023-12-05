@@ -43,6 +43,36 @@ class MetricData with ChangeNotifier {
   dynamic get waterGoal => _waterGoal;
   dynamic get stepsGoal => _stepsGoal;
 
+  void setCalories(int amount) {
+    _calories = amount;
+    notifyListeners();
+  }
+
+  void setCarbs(int amount) {
+    _carbs = amount;
+    notifyListeners();
+  }
+
+  void setFat(int amount) {
+    _fat = amount;
+    notifyListeners();
+  }
+
+  void setProtein(int amount) {
+    _protein = amount;
+    notifyListeners();
+  }
+
+  void setWater(int amount) {
+    _waterAmount = amount;
+    notifyListeners();
+  }
+
+  void setSteps(int amount) {
+    _stepsAmount = amount;
+    notifyListeners();
+  }
+
   void incrementCalories(int amount) {
     _calories += amount;
     notifyListeners();
@@ -125,11 +155,9 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator(); // Show loading spinner while waiting
           } else if (snapshot.hasError) {
-            return Text(
-                'Error: ${snapshot.error}'); // Show error message if something went wrong
+            return Text('Error: ${snapshot.error}'); // Show error message if something went wrong
           } else if (snapshot.hasData) {
-            return HomePage(
-                usr: snapshot.data!); // Pass User object to HomePage
+            return HomePage(usr: snapshot.data!); // Pass User object to HomePage
           } else {
             return Text('No data'); // Show message if no data
           }
@@ -142,8 +170,7 @@ class MyApp extends StatelessWidget {
 // Delete this after development of home page
 Future<User?> usr() async {
   try {
-    var user =
-        await ApiService().login("christian.vqz3@gmail.com", "christian");
+    var user = await ApiService().login("christian.vqz3@gmail.com", "christian");
     return user;
   } catch (e) {
     print(e);

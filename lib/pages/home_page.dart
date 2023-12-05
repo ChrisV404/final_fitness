@@ -25,6 +25,7 @@ class Item {
   String? protein;
   String? fat;
   String? carbs;
+  String? amount;
 
   Item({
     this.time,
@@ -34,6 +35,7 @@ class Item {
     this.protein,
     this.fat,
     this.carbs,
+    this.amount,
   });
 
   Map<String, dynamic> toJson() => {
@@ -44,6 +46,7 @@ class Item {
         "fat": fat,
         "protein": protein,
         "carbs": carbs,
+        "amount": amount,
       };
 }
 
@@ -369,6 +372,24 @@ class _HomePageState extends State<HomePage> {
               var obj = json.decode(response);
               // Update foodlist
               setState(() {
+                // Check if there's no consumed items for today
+                // If not, clear foodList
+                if (obj['info']['dates'][formattedDate].length == 0) {
+                  foodList.clear();
+                  return;
+                }
+
+                // Had to clear foodList here because it was duplicating items
+                foodList.clear();
+
+                // There is consumed items for today
+                int cals = 0;
+                int carbs = 0;
+                int fat = 0;
+                int protein = 0;
+                int water = 0;
+                int steps = 0;
+
                 for (var item in obj['info']['dates'][formattedDate]) {
                   var type = item['type'];
                   var name = item['name'];
@@ -382,6 +403,7 @@ class _HomePageState extends State<HomePage> {
                     protein: item['protein'],
                     fat: item['fat'],
                     carbs: item['carbs'],
+                    amount: item['amount'],
                   );
 
                   if (type == 'water') {
@@ -400,15 +422,40 @@ class _HomePageState extends State<HomePage> {
                   }
 
                   foodList.add(foodItem);
+
+                  if (foodItem.calories != "-") {
+                    cals += int.parse(foodItem.calories!);
+                  }
+                  if (foodItem.carbs != "-") {
+                    carbs += int.parse(foodItem.carbs!);
+                  }
+                  if (foodItem.fat != "-") {
+                    fat += int.parse(foodItem.fat!);
+                  }
+                  if (foodItem.protein != "-") {
+                    protein += int.parse(foodItem.protein!);
+                  }
+                  if (foodItem.type == 'water') {
+                    water += int.parse(foodItem.amount!);
+                  }
+                  if (foodItem.type == 'steps') {
+                    steps += int.parse(foodItem.amount!);
+                  }
                 }
+                // Update metrics
+                Provider.of<MetricData>(context, listen: false).setCalories(cals);
+                Provider.of<MetricData>(context, listen: false).setCarbs(carbs);
+                Provider.of<MetricData>(context, listen: false).setFat(fat);
+                Provider.of<MetricData>(context, listen: false).setProtein(protein);
+                Provider.of<MetricData>(context, listen: false).setWater(water);
+                Provider.of<MetricData>(context, listen: false).setSteps(steps);
               });
+
+              // Assign user new token
+              widget.usr.token = obj['token']['accessToken'];
             } catch (e) {
               print(e);
             }
-
-            // Refresh metrics
-            // await Provider.of<MetricData>(context, listen: false).refreshMetrics();
-            // setState(() {});
           },
           child: CustomScrollView(
             slivers: <Widget>[
