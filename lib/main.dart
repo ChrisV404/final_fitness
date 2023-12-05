@@ -15,17 +15,57 @@ void main() async {
   );
 }
 
+// Export class to another file for better organization
 class MetricData with ChangeNotifier {
+  int _calories = 0;
+  int _carbs = 0;
+  int _fat = 0;
+  int _protein = 0;
   int _waterAmount = 0;
   int _stepsAmount = 0;
+
+  dynamic _caloriesGoal = "-";
+  dynamic _carbsGoal = "-";
+  dynamic _fatGoal = "-";
+  dynamic _proteinGoal = "-";
   dynamic _waterGoal = "-";
   dynamic _stepsGoal = "-";
 
+  int get calories => _calories;
+  int get carbs => _carbs;
+  int get fat => _fat;
+  int get protein => _protein;
   int get waterAmount => _waterAmount;
   int get stepsAmount => _stepsAmount;
+
+  dynamic get caloriesGoal => _caloriesGoal;
+  dynamic get carbsGoal => _carbsGoal;
+  dynamic get fatGoal => _fatGoal;
+  dynamic get proteinGoal => _proteinGoal;
   dynamic get waterGoal => _waterGoal;
   dynamic get stepsGoal => _stepsGoal;
 
+
+  void incrementCalories(int amount) {
+    _calories += amount;
+    notifyListeners();
+  }
+
+  void incrementCarbs(int amount) {
+    _carbs += amount;
+    notifyListeners();
+  }
+
+  void incrementFat(int amount) {
+    _fat += amount;
+    notifyListeners();
+  }
+
+  void incrementProtein(int amount) {
+    _protein += amount;
+    notifyListeners();
+  }
+  
   void incrementWater(int amount) {
     _waterAmount += amount;
     notifyListeners();
@@ -33,6 +73,26 @@ class MetricData with ChangeNotifier {
 
   void incrementSteps(int amount) {
     _stepsAmount += amount;
+    notifyListeners();
+  }
+
+  void setCaloriesGoal(int goal) {
+    _caloriesGoal = goal;
+    notifyListeners();
+  }
+
+  void setCarbsGoal(int goal) {
+    _carbsGoal = goal;
+    notifyListeners();
+  }
+
+  void setFatGoal(int goal) {
+    _fatGoal = goal;
+    notifyListeners();
+  }
+
+  void setProteinGoal(int goal) {
+    _proteinGoal = goal;
     notifyListeners();
   }
 

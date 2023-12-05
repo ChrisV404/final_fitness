@@ -247,6 +247,10 @@ class _TrackersState extends State<Trackers> {
                     map['calories'] = "-1";
                   } else {
                     map['calories'] = calController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setCaloriesGoal(int.parse(calController.text));
+                    }
                   }
                 } else {
                   if (checkboxVal1 == false && calController.text != '') {
@@ -262,6 +266,10 @@ class _TrackersState extends State<Trackers> {
                     map['carbs'] = "-1";
                   } else {
                     map['carbs'] = carbController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setCarbsGoal(int.parse(carbController.text));
+                    }
                   }
                 } else {
                   if (checkboxVal2 == false && carbController.text != '') {
@@ -277,6 +285,10 @@ class _TrackersState extends State<Trackers> {
                     map['fat'] = "-1";
                   } else {
                     map['fat'] = fatController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setFatGoal(int.parse(fatController.text));
+                    }
                   }
                 } else {
                   if (checkboxVal3 == false && fatController.text != '') {
@@ -292,6 +304,10 @@ class _TrackersState extends State<Trackers> {
                     map['protein'] = "-1";
                   } else {
                     map['protein'] = proteinController.text;
+                    if (mounted) {
+                      Provider.of<MetricData>(context, listen: false)
+                          .setProteinGoal(int.parse(proteinController.text));
+                    }
                   }
                 } else {
                   if (checkboxVal4 == false && proteinController.text != '') {

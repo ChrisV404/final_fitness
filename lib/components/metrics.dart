@@ -1,4 +1,6 @@
+import 'package:final_fitness/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Metrics extends StatefulWidget {
   // final String data;
@@ -57,7 +59,7 @@ class _MetricsState extends State<Metrics> {
                     SizedBox(width: 10)
                   ],
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(top: 20),
                   child: Row(
                     children: [
@@ -71,7 +73,8 @@ class _MetricsState extends State<Metrics> {
                       ),
                       SizedBox(width: 194),
                       Text(
-                        '2000',
+                        Provider.of<MetricData>(context, listen: true)
+                          .calories.toString(), // dynamic data
                         style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'Poppins',
@@ -79,7 +82,8 @@ class _MetricsState extends State<Metrics> {
                       ),
                       SizedBox(width: 30),
                       Text(
-                        '2500',
+                        Provider.of<MetricData>(context, listen: true)
+                          .caloriesGoal.toString(), // dynamic data
                         style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'Poppins',
@@ -99,7 +103,7 @@ class _MetricsState extends State<Metrics> {
                         Color.fromARGB(255, 240, 81, 57)),
                   ),
                 ),
-                const Row(
+                Row(
                   children: [
                     SizedBox(width: 20),
                     Text(
@@ -111,7 +115,7 @@ class _MetricsState extends State<Metrics> {
                     ),
                     SizedBox(width: 210),
                     Text(
-                      '2000',
+                      Provider.of<MetricData>(context, listen: true).carbs.toString(),
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: 'Poppins',
@@ -119,7 +123,7 @@ class _MetricsState extends State<Metrics> {
                     ),
                     SizedBox(width: 30),
                     Text(
-                      '2500',
+                      Provider.of<MetricData>(context, listen: true).carbsGoal.toString(),
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: 'Poppins',
@@ -139,7 +143,7 @@ class _MetricsState extends State<Metrics> {
                         Color.fromARGB(255, 57, 191, 240)),
                   ),
                 ),
-                const Row(
+                 Row(
                   children: [
                     SizedBox(width: 20),
                     Text(
@@ -151,7 +155,7 @@ class _MetricsState extends State<Metrics> {
                     ),
                     SizedBox(width: 232),
                     Text(
-                      '2000',
+                      Provider.of<MetricData>(context, listen: true).fat.toString(),
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: 'Poppins',
@@ -159,7 +163,7 @@ class _MetricsState extends State<Metrics> {
                     ),
                     SizedBox(width: 30),
                     Text(
-                      '2500',
+                      Provider.of<MetricData>(context, listen: true).fatGoal.toString(),
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: 'Poppins',
@@ -179,7 +183,7 @@ class _MetricsState extends State<Metrics> {
                         Color.fromARGB(255, 78, 240, 57)),
                   ),
                 ),
-                const Row(
+                Row(
                   children: [
                     SizedBox(width: 20),
                     Text(
@@ -191,7 +195,7 @@ class _MetricsState extends State<Metrics> {
                     ),
                     SizedBox(width: 204),
                     Text(
-                      '2000',
+                      Provider.of<MetricData>(context, listen: true).protein.toString(),
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: 'Poppins',
@@ -199,7 +203,7 @@ class _MetricsState extends State<Metrics> {
                     ),
                     SizedBox(width: 30),
                     Text(
-                      '2500',
+                      Provider.of<MetricData>(context, listen: true).proteinGoal.toString(),
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: 'Poppins',
@@ -218,12 +222,6 @@ class _MetricsState extends State<Metrics> {
                     valueColor: const AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 186, 102, 236)),
                   ),
-                ),
-                const  Row(
-                  children: [],
-                ),
-                const Row(
-                  children: [],
                 ),
               ],
             ),

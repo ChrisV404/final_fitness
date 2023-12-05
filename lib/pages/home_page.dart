@@ -169,6 +169,13 @@ class _HomePageState extends State<HomePage> {
                                                       formattedDate,
                                                       item.toJson(),
                                                       widget.usr.token);
+
+                                                  // Update food macros in UI
+                                                  Provider.of<MetricData>(context,listen: false).incrementCalories(int.parse(calController.text));
+                                                  Provider.of<MetricData>(context,listen: false).incrementCarbs(int.parse(carbController.text));
+                                                  Provider.of<MetricData>(context,listen: false).incrementFat(int.parse(fatController.text));
+                                                  Provider.of<MetricData>(context,listen: false).incrementProtein(int.parse(proteinController.text));
+
                                                   Navigator.pop(context);
                                                 },
                                                 text: 'Add Food'),
@@ -477,7 +484,8 @@ class _HomePageState extends State<HomePage> {
               metricName: 'Steps',
               metricAmount:
                   Provider.of<MetricData>(context, listen: true).stepsAmount,
-              goal: Provider.of<MetricData>(context, listen: true).stepsGoal, // supposed to be an int
+              goal: Provider.of<MetricData>(context, listen: true)
+                  .stepsGoal, // supposed to be an int
             ),
             const SizedBox(width: 50),
             SmallMetric(
@@ -486,7 +494,7 @@ class _HomePageState extends State<HomePage> {
                     Provider.of<MetricData>(context, listen: true).waterAmount,
                 goal: Provider.of<MetricData>(context, listen: true)
                     .waterGoal // supposed to be an int
-            ),
+                ),
           ],
         )
       ]),
