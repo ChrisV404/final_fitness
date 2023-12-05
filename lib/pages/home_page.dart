@@ -76,6 +76,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get today's date
+    DateTime now = DateTime.now();
+    String formattedDate =
+        '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+
     return Scaffold(
       bottomNavigationBar: createNavigationBar(),
       backgroundColor: Colors.grey[300],
@@ -297,9 +302,11 @@ class _HomePageState extends State<HomePage> {
                                             MyButton(
                                                 onTap: () {
                                                   DateTime now = DateTime.now();
+                                                  String formattedTime =
+                                                      '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
 
                                                   var stepObj = {
-                                                    "time": "-",
+                                                    "time": formattedTime,
                                                     "type": "steps",
                                                     "amount": stepsController.text
                                                   };
@@ -354,48 +361,98 @@ class _HomePageState extends State<HomePage> {
         NutritionPage(),
         WorkoutPage(),
         // Home Page
-        CustomScrollView(
-          slivers: <Widget>[
-            const SliverAppBar(
-              backgroundColor: Colors.white,
-              centerTitle: true,
-              title: Text(
-                'Final Fitness',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
+        RefreshIndicator(
+          onRefresh: () async {
+            try {
+              var response = await ApiService()
+                  .fetchConsumed(widget.usr.info.infoId, formattedDate, widget.usr.token);
+              var obj = json.decode(response);
+              // Update foodlist
+              setState(() {
+                for (var item in obj['info']['dates'][formattedDate]) {
+                  var type = item['type'];
+                  var name = item['name'];
+
+                  // Create item object
+                  Item foodItem = Item(
+                    time: item['time'],
+                    type: type,
+                    name: name,
+                    calories: item['calories'],
+                    protein: item['protein'],
+                    fat: item['fat'],
+                    carbs: item['carbs'],
+                  );
+
+                  if (type == 'water') {
+                    foodItem.name = 'Water';
+                    foodItem.calories = '-';
+                    foodItem.protein = '-';
+                    foodItem.fat = '-';
+                    foodItem.carbs = '-';
+                  }
+                  if (type == 'steps') {
+                    foodItem.name = 'Steps';
+                    foodItem.calories = '-';
+                    foodItem.protein = '-';
+                    foodItem.fat = '-';
+                    foodItem.carbs = '-';
+                  }
+
+                  foodList.add(foodItem);
+                }
+              });
+            } catch (e) {
+              print(e);
+            }
+
+            // Refresh metrics
+            // await Provider.of<MetricData>(context, listen: false).refreshMetrics();
+            // setState(() {});
+          },
+          child: CustomScrollView(
+            slivers: <Widget>[
+              const SliverAppBar(
+                backgroundColor: Colors.white,
+                centerTitle: true,
+                title: Text(
+                  'Final Fitness',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                  ),
                 ),
               ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(<Widget>[
-                Container(
-                  margin: const EdgeInsets.fromLTRB(20, 10, 20, 30),
-                  child: Text(
-                    "Hi, ${widget.usr.info.firstName}",
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    "TODAY",
-                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ]),
-            ),
-            Metrics(),
-            smallerMetrics(),
-            FoodLog(foodList: foodList),
-            SliverList(
+              SliverList(
                 delegate: SliverChildListDelegate(<Widget>[
-              Container(
-                height: 100,
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+                    child: Text(
+                      "Hi, ${widget.usr.info.firstName}",
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      "TODAY",
+                      style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ]),
               ),
-            ]))
-          ],
+              Metrics(),
+              smallerMetrics(),
+              FoodLog(foodList: foodList),
+              SliverList(
+                  delegate: SliverChildListDelegate(<Widget>[
+                Container(
+                  height: 100,
+                ),
+              ]))
+            ],
+          ),
         ),
         CalendarPage(),
         SettingsPage(),

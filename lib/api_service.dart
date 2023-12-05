@@ -130,7 +130,7 @@ class ApiService {
     return null;
   }
 
-  Future fetchConsumed(userId, data, accessToken) async {
+  Future fetchConsumed(userId, date, accessToken) async {
     try {
       var url =
           Uri.parse(ApiConstants.baseUrl + ApiConstants.fetchConsumedEndpoint);
@@ -139,7 +139,7 @@ class ApiService {
             'Content-Type': 'application/json',
           },
           body: jsonEncode(
-              {"userId": userId, "date": data, "accessToken": accessToken}));
+              {"userId": userId, "date": date, "accessToken": accessToken}));
       if (response.statusCode == 200) {
         var jsonResponse = response.body;
         log(jsonResponse);
