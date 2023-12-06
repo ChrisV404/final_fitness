@@ -33,7 +33,6 @@ class _SettingsPageState extends State<SettingsPage> {
 //make api fucntion for delete
   void deleteAccount(User usr) async {
     try {
-      log("id:" + usr.id.toString());
       var deleteUser = await ApiService().deleteAccount(usr.id, usr.token);
 
       if (deleteUser != null) {
