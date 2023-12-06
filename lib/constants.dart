@@ -5,6 +5,8 @@ class ApiConstants {
   static String addConsumedItemEndpoint = "api/addConsumedItem";
   static String updateTrackedEndpoint = "api/updateTracked";
   static String fetchConsumedEndpoint = "api/fetchConsumed";
+  static String deleteAccountEndpoint = "api/deleteAccount";
+  static String updateSettingsEndpoint = "api/updateSettings";
   static String deleteConsumedItemEndpoint = "api/deleteConsumedItem";
   static String updateConsumedItemEndpoint = "api/updateConsumedItem";
 }

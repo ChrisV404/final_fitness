@@ -501,8 +501,8 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        CalendarPage(),
-        SettingsPage(),
+        CalendarPage(usr: widget.usr),
+        SettingsPage(usr: widget.usr),
       ][currentPageIndex],
     );
   }

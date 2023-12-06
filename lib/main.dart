@@ -155,9 +155,11 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator(); // Show loading spinner while waiting
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}'); // Show error message if something went wrong
+            return Text(
+                'Error: ${snapshot.error}'); // Show error message if something went wrong
           } else if (snapshot.hasData) {
-            return HomePage(usr: snapshot.data!); // Pass User object to HomePage
+            return HomePage(
+                usr: snapshot.data!); // Pass User object to HomePage
           } else {
             return Text('No data'); // Show message if no data
           }
@@ -170,7 +172,8 @@ class MyApp extends StatelessWidget {
 // Delete this after development of home page
 Future<User?> usr() async {
   try {
-    var user = await ApiService().login("christian.vqz3@gmail.com", "christian");
+    var user =
+        await ApiService().login("christian.vqz3@gmail.com", "christian");
     return user;
   } catch (e) {
     print(e);
