@@ -6,6 +6,8 @@ import 'dart:developer';
 import 'package:final_fitness/api_service.dart';
 import 'package:final_fitness/components/my_button.dart';
 import 'package:final_fitness/components/my_textfield.dart';
+import 'package:final_fitness/pages/login_or_register_page.dart';
+import 'package:final_fitness/pages/login_page.dart';
 import 'package:final_fitness/user_model.dart';
 import 'package:flutter/material.dart';
 
@@ -33,18 +35,23 @@ class _SettingsPageState extends State<SettingsPage> {
 //make api fucntion for delete
   void deleteAccount(User usr) async {
     try {
-      var deleteUser = await ApiService().deleteAccount(usr.id, usr.token);
+      var deleteUser =
+          await ApiService().deleteAccount(usr.info.infoId, usr.token);
 
       if (deleteUser != null) {
         var jsonResponse = jsonDecode(deleteUser);
         log('help');
 
-        if (jsonResponse["inserted"] != -1) {
-          Navigator.pop(context);
-        } else {
-          Navigator.pop(context);
-          showErrorMessage("Email already exists");
-        }
+        // if (jsonResponse["inserted"] != -1) {
+        //   Navigator.pop(context);
+        // } else {
+        //   Navigator.pop(context);
+        //   showErrorMessage("Email already exists");
+        // }
+        Navigator.pop(context);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => LoginOrRegisterPage()));
+        showErrorMessage("Account Deleted!");
       } else {
         Navigator.pop(context);
         showErrorMessage("Request failed...");
@@ -73,6 +80,16 @@ class _SettingsPageState extends State<SettingsPage> {
         showErrorMessage("Please fill all fields");
         return;
       }
+      // if password is less than 8 characters
+      if (newPasswordController.text.length < 8) {
+        showErrorMessage("Password must be at least 8 characters");
+        return;
+      }
+
+      if (newPasswordController.text != confirmNewPassController.text) {
+        showErrorMessage("New Password fields do not match");
+        return;
+      }
     } else {
       if (firstNameController.text.isEmpty ||
           lastNameController.text.isEmpty ||
@@ -80,18 +97,6 @@ class _SettingsPageState extends State<SettingsPage> {
         showErrorMessage("Please fill all fields");
         return;
       }
-    }
-
-    if (newPasswordController.text == confirmNewPassController.text &&
-        isVisible) {
-      showErrorMessage("New Password fields do not match");
-      return;
-    }
-
-    // if password is less than 8 characters
-    if (newPasswordController.text.length < 8) {
-      showErrorMessage("Password must be at least 8 characters");
-      return;
     }
 
     // show loading circle
@@ -107,15 +112,26 @@ class _SettingsPageState extends State<SettingsPage> {
     // try creating user
     try {
       //make api call function for updating user info
-      String? updateUsr = await ApiService().updateSettings(
-        widget.usr.id,
-        firstNameController.text,
-        lastNameController.text,
-        emailController.text,
-        newPasswordController.text,
-        widget.usr.token,
-      );
-
+      String? updateUsr;
+      if (isVisible) {
+        updateUsr = await ApiService().updateSettings(
+          widget.usr.info.infoId,
+          firstNameController.text,
+          lastNameController.text,
+          emailController.text,
+          newPasswordController.text,
+          widget.usr.token,
+        );
+      } else {
+        updateUsr = await ApiService().updateSettings(
+          widget.usr.info.infoId,
+          firstNameController.text,
+          lastNameController.text,
+          emailController.text,
+          widget.usr.info.password,
+          widget.usr.token,
+        );
+      }
       if (context.mounted) {
         if (updateUsr != null) {
           // Obtain json from registerUsr string
@@ -123,6 +139,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
           if (jsonResponse["inserted"] != -1) {
             Navigator.pop(context);
+            widget.usr.info.firstName = firstNameController.text;
+            showErrorMessage("Information Updated");
           } else {
             Navigator.pop(context);
             showErrorMessage("Email already exists");
@@ -204,6 +222,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(height: 25),
 
                     // first name textfield
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("First Name")),
+                    ),
                     MyTextField(
                       controller: firstNameController,
                       hintText: 'First Name',
@@ -213,6 +237,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(height: 10),
 
                     // last name textfield
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Last Name")),
+                    ),
                     MyTextField(
                       controller: lastNameController,
                       hintText: 'Last Name',
@@ -222,6 +252,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(height: 10),
 
                     // email textfield
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Email")),
+                    ),
                     MyTextField(
                       controller: emailController,
                       hintText: 'Email',
@@ -246,18 +282,36 @@ class _SettingsPageState extends State<SettingsPage> {
                     Visibility(
                       visible: isVisible,
                       child: Column(children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Previous Password")),
+                        ),
                         MyTextField(
                           controller: prevPasswordController,
                           hintText: 'Previous Password',
                           obscureText: true,
                         ),
                         const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("New Password")),
+                        ),
                         MyTextField(
                           controller: newPasswordController,
                           hintText: 'New Password',
                           obscureText: true,
                         ),
                         const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("First Name")),
+                        ),
                         MyTextField(
                           controller: confirmNewPassController,
                           hintText: 'Confirm New Password',
