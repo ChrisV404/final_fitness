@@ -43,33 +43,33 @@ class MetricData with ChangeNotifier {
   dynamic get waterGoal => _waterGoal;
   dynamic get stepsGoal => _stepsGoal;
 
-  void setCalories(int amount) {
-    _calories = amount;
+  void setCalories(int curAmount, int newAmount) {
+    _calories = (_calories - curAmount) + newAmount;
     notifyListeners();
   }
 
-  void setCarbs(int amount) {
-    _carbs = amount;
+  void setCarbs(int curAmount, int newAmount) {
+    _carbs = (_carbs - curAmount) + newAmount;
     notifyListeners();
   }
 
-  void setFat(int amount) {
-    _fat = amount;
+  void setFat(int curAmount, int newAmount) {
+    _fat = (_fat - curAmount) + newAmount;
     notifyListeners();
   }
 
-  void setProtein(int amount) {
-    _protein = amount;
+  void setProtein(int curAmount, int newAmount) {
+    _protein = (_protein - curAmount) + newAmount;
     notifyListeners();
   }
 
-  void setWater(int amount) {
-    _waterAmount = amount;
+  void setWater(int curAmount, int newAmount) {
+    _waterAmount = (_waterAmount - curAmount) + newAmount;
     notifyListeners();
   }
 
-  void setSteps(int amount) {
-    _stepsAmount = amount;
+  void setSteps(int curAmount, int newAmount) {
+    _stepsAmount = (_stepsAmount - curAmount) + newAmount;
     notifyListeners();
   }
 
@@ -100,6 +100,96 @@ class MetricData with ChangeNotifier {
 
   void incrementSteps(int amount) {
     _stepsAmount += amount;
+    notifyListeners();
+  }
+
+  void decrementCalories(int amount) {
+    _calories -= amount;
+    notifyListeners();
+  }
+
+  void decrementCarbs(int amount) {
+    _carbs -= amount;
+    notifyListeners();
+  }
+
+  void decrementFat(int amount) {
+    _fat -= amount;
+    notifyListeners();
+  }
+
+  void decrementProtein(int amount) {
+    _protein -= amount;
+    notifyListeners();
+  }
+
+  void decrementWater(int amount) {
+    _waterAmount -= amount;
+    notifyListeners();
+  }
+
+  void decrementSteps(int amount) {
+    _stepsAmount -= amount;
+    notifyListeners();
+  }
+
+  // void initCalories(int amount) {
+  //   _calories -= amount;
+  //   notifyListeners();
+  // }
+
+  // void initCarbs(int amount) {
+  //   _carbs -= amount;
+  //   notifyListeners();
+  // }
+
+  // void initFat(int amount) {
+  //   _fat -= amount;
+  //   notifyListeners();
+  // }
+
+  // void initProtein(int amount) {
+  //   _protein -= amount;
+  //   notifyListeners();
+  // }
+
+  // void initWater(int amount) {
+  //   _waterAmount -= amount;
+  //   notifyListeners();
+  // }
+
+  // void initSteps(int amount) {
+  //   _stepsAmount -= amount;
+  //   notifyListeners();
+  // }
+
+  void fetchCalories(int amount) {
+    _calories = amount;
+    notifyListeners();
+  }
+
+  void fetchCarbs(int amount) {
+    _carbs = amount;
+    notifyListeners();
+  }
+
+  void fetchFat(int amount) {
+    _fat = amount;
+    notifyListeners();
+  }
+
+  void fetchProtein(int amount) {
+    _protein = amount;
+    notifyListeners();
+  }
+
+  void fetchWater(int amount) {
+    _waterAmount = amount;
+    notifyListeners();
+  }
+
+  void fetchSteps(int amount) {
+    _stepsAmount = amount;
     notifyListeners();
   }
 

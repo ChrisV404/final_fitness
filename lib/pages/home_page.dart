@@ -70,6 +70,108 @@ class _HomePageState extends State<HomePage> {
   final waterController = TextEditingController();
   final stepsController = TextEditingController();
 
+  dynamic initResponse(formattedDate) async {
+    try {
+      var response =
+          await ApiService().fetchConsumed(widget.usr.info.infoId, formattedDate, widget.usr.token);
+      var obj = json.decode(response);
+      return obj;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch data from server
+    DateTime now = DateTime.now();
+    String formattedDate =
+        '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+    initResponse(formattedDate).then((obj) {
+      setState(() {
+        // Check if there's no consumed items for today
+        // If not, clear foodList
+        if (obj['info']['dates'][formattedDate].length == 0) {
+          // foodList.clear();
+          return;
+        }
+
+        // // Had to clear foodList here because it was duplicating items
+        // foodList.clear();
+
+        // There is consumed items for today
+        int cals = 0;
+        int carbs = 0;
+        int fat = 0;
+        int protein = 0;
+        int water = 0;
+        int steps = 0;
+
+        for (var item in obj['info']['dates'][formattedDate]) {
+          var type = item['type'];
+          var name = item['name'];
+
+          // Create item object
+          Item foodItem = Item(
+            time: item['time'],
+            type: type,
+            name: name,
+            calories: (item['calories'] == "-1") ? "0" : item['calories'],
+            protein: (item['protein'] == "-1") ? "0" : item['protein'],
+            fat: (item['fat'] == "-1") ? "0" : item['fat'],
+            carbs: (item['carbs'] == "-1") ? "0" : item['carbs'],
+            amount: item['amount'],
+          );
+
+          if (type == 'water') {
+            foodItem.name = 'Water';
+            foodItem.calories = '-';
+            foodItem.protein = '-';
+            foodItem.fat = '-';
+            foodItem.carbs = '-';
+          }
+          if (type == 'steps') {
+            foodItem.name = 'Steps';
+            foodItem.calories = '-';
+            foodItem.protein = '-';
+            foodItem.fat = '-';
+            foodItem.carbs = '-';
+          }
+
+          foodList.add(foodItem);
+
+          if (foodItem.type == "food") {
+            cals += int.parse(foodItem.calories!);
+
+            carbs += int.parse(foodItem.carbs!);
+
+            fat += int.parse(foodItem.fat!);
+
+            protein += int.parse(foodItem.protein!);
+          }
+          if (foodItem.type == 'water') {
+            water += int.parse(foodItem.amount!);
+          }
+          if (foodItem.type == 'steps') {
+            steps += int.parse(foodItem.amount!);
+          }
+        }
+        // Update metrics
+        Provider.of<MetricData>(context, listen: false).fetchCalories(cals);
+        Provider.of<MetricData>(context, listen: false).fetchCarbs(carbs);
+        Provider.of<MetricData>(context, listen: false).fetchFat(fat);
+        Provider.of<MetricData>(context, listen: false).fetchProtein(protein);
+        Provider.of<MetricData>(context, listen: false).fetchWater(water);
+        Provider.of<MetricData>(context, listen: false).fetchSteps(steps);
+      });
+
+      // Assign user new token
+      widget.usr.token = obj['token']['accessToken'];
+    });
+    // fetchConsumed();
+  }
+
   // Sign user out method
   void signUserOut() {}
 
@@ -160,16 +262,16 @@ class _HomePageState extends State<HomePage> {
                                                     type: 'food',
                                                     name: nameController.text,
                                                     calories: (calController.text == "")
-                                                        ? "-1"
+                                                        ? "0"
                                                         : calController.text,
                                                     protein: (proteinController.text == "")
-                                                        ? "-1"
+                                                        ? "0"
                                                         : proteinController.text,
                                                     fat: (fatController.text == "")
-                                                        ? "-1"
+                                                        ? "0"
                                                         : fatController.text,
                                                     carbs: (carbController.text == "")
-                                                        ? "-1"
+                                                        ? "0"
                                                         : carbController.text,
                                                   );
 
@@ -177,11 +279,26 @@ class _HomePageState extends State<HomePage> {
                                                     foodList.add(item);
                                                   });
 
+                                                  var food = item.toJson();
+                                                  if (food['calories'] == "0") {
+                                                    food['calories'] = "-1";
+                                                  }
+                                                  if (food['protein'] == "0") {
+                                                    food['protein'] = "-1";
+                                                  }
+                                                  if (food['fat'] == "0") {
+                                                    food['fat'] = "-1";
+                                                  }
+                                                  if (food['carbs'] == "0") {
+                                                    food['carbs'] = "-1";
+                                                  }
+                                                  food.remove('amount');
+
                                                   // Call API to add food to database
                                                   String formattedDate =
                                                       '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
                                                   addFoodItem(widget.usr.info.infoId, formattedDate,
-                                                      item.toJson(), widget.usr.token);
+                                                      food, widget.usr.token);
 
                                                   // Update food macros in UI
                                                   if (calController.text != "") {
@@ -205,6 +322,12 @@ class _HomePageState extends State<HomePage> {
                                                             int.parse(proteinController.text));
                                                   }
 
+                                                  // Clear text fields
+                                                  nameController.clear();
+                                                  calController.clear();
+                                                  carbController.clear();
+                                                  fatController.clear();
+                                                  proteinController.clear();
                                                   Navigator.pop(context);
                                                 },
                                                 text: 'Add Food'),
@@ -249,21 +372,40 @@ class _HomePageState extends State<HomePage> {
                                                   String formattedTime =
                                                       '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
 
-                                                  var waterObj = {
-                                                    "time": formattedTime,
-                                                    "type": "water",
-                                                    "amount": waterController.text
-                                                  };
+                                                  // Create water item
+                                                  var waterObj = Item(
+                                                    time: formattedTime,
+                                                    type: "water",
+                                                    name: "Water",
+                                                    calories: "-",
+                                                    protein: "-",
+                                                    fat: "-",
+                                                    carbs: "-",
+                                                    amount: waterController.text,
+                                                  );
+
+                                                  setState(() {
+                                                    foodList.add(waterObj);
+                                                  });
+
+                                                  var water = waterObj.toJson();
+                                                  water.remove('calories');
+                                                  water.remove('protein');
+                                                  water.remove('fat');
+                                                  water.remove('carbs');
+                                                  water.remove('name');
 
                                                   // Add water object to foodList
                                                   String formattedDate =
                                                       '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
                                                   addFoodItem(widget.usr.info.infoId, formattedDate,
-                                                      waterObj, widget.usr.token);
+                                                      water, widget.usr.token);
                                                   // Update water amount
                                                   Provider.of<MetricData>(context, listen: false)
                                                       .incrementWater(
                                                           int.parse(waterController.text));
+
+                                                  waterController.clear();
                                                   Navigator.pop(context);
                                                 },
                                                 text: 'Add Water'),
@@ -308,21 +450,39 @@ class _HomePageState extends State<HomePage> {
                                                   String formattedTime =
                                                       '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
 
-                                                  var stepObj = {
-                                                    "time": formattedTime,
-                                                    "type": "steps",
-                                                    "amount": stepsController.text
-                                                  };
+                                                  var stepObj = Item(
+                                                    time: formattedTime,
+                                                    type: "steps",
+                                                    name: "Steps",
+                                                    calories: "-",
+                                                    protein: "-",
+                                                    fat: "-",
+                                                    carbs: "-",
+                                                    amount: stepsController.text,
+                                                  );
+
+                                                  setState(() {
+                                                    foodList.add(stepObj);
+                                                  });
+
+                                                  var step = stepObj.toJson();
+                                                  step.remove('calories');
+                                                  step.remove('protein');
+                                                  step.remove('fat');
+                                                  step.remove('carbs');
+                                                  step.remove('name');
 
                                                   String formattedDate =
                                                       '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
                                                   addFoodItem(widget.usr.info.infoId, formattedDate,
-                                                      stepObj, widget.usr.token);
+                                                      step, widget.usr.token);
 
                                                   // Update steps amount
                                                   Provider.of<MetricData>(context, listen: false)
                                                       .incrementSteps(
                                                           int.parse(stepsController.text));
+
+                                                  stepsController.clear();
                                                   Navigator.pop(context);
                                                 },
                                                 text: 'Add Steps'),
@@ -366,6 +526,7 @@ class _HomePageState extends State<HomePage> {
         // Home Page
         RefreshIndicator(
           onRefresh: () async {
+            // Fetch data from server
             try {
               var response = await ApiService()
                   .fetchConsumed(widget.usr.info.infoId, formattedDate, widget.usr.token);
@@ -376,6 +537,12 @@ class _HomePageState extends State<HomePage> {
                 // If not, clear foodList
                 if (obj['info']['dates'][formattedDate].length == 0) {
                   foodList.clear();
+                  Provider.of<MetricData>(context, listen: false).fetchCalories(0);
+                  Provider.of<MetricData>(context, listen: false).fetchCarbs(0);
+                  Provider.of<MetricData>(context, listen: false).fetchFat(0);
+                  Provider.of<MetricData>(context, listen: false).fetchProtein(0);
+                  Provider.of<MetricData>(context, listen: false).fetchWater(0);
+                  Provider.of<MetricData>(context, listen: false).fetchSteps(0);
                   return;
                 }
 
@@ -399,10 +566,10 @@ class _HomePageState extends State<HomePage> {
                     time: item['time'],
                     type: type,
                     name: name,
-                    calories: item['calories'],
-                    protein: item['protein'],
-                    fat: item['fat'],
-                    carbs: item['carbs'],
+                    calories: (item['calories'] == "-1") ? "0" : item['calories'],
+                    protein: (item['protein'] == "-1") ? "0" : item['protein'],
+                    fat: (item['fat'] == "-1") ? "0" : item['fat'],
+                    carbs: (item['carbs'] == "-1") ? "0" : item['carbs'],
                     amount: item['amount'],
                   );
 
@@ -423,16 +590,16 @@ class _HomePageState extends State<HomePage> {
 
                   foodList.add(foodItem);
 
-                  if (foodItem.calories != "-") {
+                  if (foodItem.calories != "-1") {
                     cals += int.parse(foodItem.calories!);
                   }
-                  if (foodItem.carbs != "-") {
+                  if (foodItem.carbs != "-1") {
                     carbs += int.parse(foodItem.carbs!);
                   }
-                  if (foodItem.fat != "-") {
+                  if (foodItem.fat != "-1") {
                     fat += int.parse(foodItem.fat!);
                   }
-                  if (foodItem.protein != "-") {
+                  if (foodItem.protein != "-1") {
                     protein += int.parse(foodItem.protein!);
                   }
                   if (foodItem.type == 'water') {
@@ -443,12 +610,12 @@ class _HomePageState extends State<HomePage> {
                   }
                 }
                 // Update metrics
-                Provider.of<MetricData>(context, listen: false).setCalories(cals);
-                Provider.of<MetricData>(context, listen: false).setCarbs(carbs);
-                Provider.of<MetricData>(context, listen: false).setFat(fat);
-                Provider.of<MetricData>(context, listen: false).setProtein(protein);
-                Provider.of<MetricData>(context, listen: false).setWater(water);
-                Provider.of<MetricData>(context, listen: false).setSteps(steps);
+                Provider.of<MetricData>(context, listen: false).fetchCalories(cals);
+                Provider.of<MetricData>(context, listen: false).fetchCarbs(carbs);
+                Provider.of<MetricData>(context, listen: false).fetchFat(fat);
+                Provider.of<MetricData>(context, listen: false).fetchProtein(protein);
+                Provider.of<MetricData>(context, listen: false).fetchWater(water);
+                Provider.of<MetricData>(context, listen: false).fetchSteps(steps);
               });
 
               // Assign user new token
@@ -491,7 +658,17 @@ class _HomePageState extends State<HomePage> {
               ),
               Metrics(),
               smallerMetrics(),
-              FoodLog(foodList: foodList),
+              FoodLog(
+                  foodList: foodList,
+                  user: widget.usr,
+                  callback: callback,
+                  nameController: nameController,
+                  calController: calController,
+                  carbController: carbController,
+                  fatController: fatController,
+                  proteinController: proteinController,
+                  waterController: waterController,
+                  stepsController: stepsController),
               SliverList(
                   delegate: SliverChildListDelegate(<Widget>[
                 Container(
