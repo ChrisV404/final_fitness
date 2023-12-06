@@ -42,12 +42,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   title: Text('Calories'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NutritionPage(),
-                      ),
-                    );
                   },
                   trailing: iconFail,
                 ),
@@ -56,12 +50,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   title: Text('Carbs'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NutritionPage(),
-                      ),
-                    );
                   },
                   trailing: iconFail,
                 ),
@@ -70,12 +58,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   title: Text('Fat'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NutritionPage(),
-                      ),
-                    );
                   },
                   trailing: iconFail,
                 ),
@@ -84,12 +66,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   title: Text('Protein'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NutritionPage(),
-                      ),
-                    );
                   },
                   trailing: iconFail,
                 ),
@@ -98,12 +74,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   title: Text('Steps'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NutritionPage(),
-                      ),
-                    );
                   },
                   trailing: iconFail,
                 ),
@@ -112,12 +82,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   title: Text('Water'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NutritionPage(),
-                      ),
-                    );
                   },
                   trailing: iconFail,
                 ),

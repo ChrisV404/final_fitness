@@ -130,6 +130,62 @@ class ApiService {
     return null;
   }
 
+  Future deleteAccount(userId, accessToken) async {
+    try {
+      var url =
+          Uri.parse(ApiConstants.baseUrl + ApiConstants.deleteAccountEndpoint);
+      var response = await http.post(url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({"userId": userId, "accessToken": accessToken}));
+
+      if (response.statusCode == 200) {
+        var jsonResponse = response.body;
+        log(jsonResponse);
+
+        return jsonResponse;
+      } else {
+        log('Request failed with status: ${response.statusCode}.');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  Future updateSettings(
+      userId, firstName, lastName, email, password, accessToken) async {
+    try {
+      var url =
+          Uri.parse(ApiConstants.baseUrl + ApiConstants.updateSettingsEndpoint);
+      var response = await http.post(url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            "userId": userId,
+            "firstName": firstName,
+            "lastName": lastName,
+            "email": email,
+            "password": password,
+            "accessToken": accessToken
+          }));
+
+      if (response.statusCode == 200) {
+        var jsonResponse = response.body;
+        log(jsonResponse);
+
+        return jsonResponse;
+      } else {
+        log('Request failed with status: ${response.statusCode}.');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
   Future fetchConsumed(userId, date, accessToken) async {
     try {
       var url =

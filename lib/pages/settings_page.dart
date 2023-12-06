@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:final_fitness/api_service.dart';
 import 'package:final_fitness/components/my_button.dart';
@@ -28,6 +29,37 @@ class _SettingsPageState extends State<SettingsPage> {
   final prevPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
   final confirmNewPassController = TextEditingController();
+
+//make api fucntion for delete
+  void deleteAccount(User usr) async {
+    try {
+      log("id:" + usr.id.toString());
+      var deleteUser = await ApiService().deleteAccount(usr.id, usr.token);
+
+      if (deleteUser != null) {
+        var jsonResponse = jsonDecode(deleteUser);
+        log('help');
+
+        if (jsonResponse["inserted"] != -1) {
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+          showErrorMessage("Email already exists");
+        }
+      } else {
+        Navigator.pop(context);
+        showErrorMessage("Request failed...");
+      }
+    } catch (e) {
+      // pop the loading circle
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      // show error message
+      showErrorMessage(e.toString());
+    }
+    signUserOut();
+  }
 
   // sign user up method
   void updateUserInfo() async {
@@ -75,17 +107,20 @@ class _SettingsPageState extends State<SettingsPage> {
 
     // try creating user
     try {
-      String? registerUsr = await ApiService().register(
+      //make api call function for updating user info
+      String? updateUsr = await ApiService().updateSettings(
+        widget.usr.id,
         firstNameController.text,
         lastNameController.text,
         emailController.text,
         newPasswordController.text,
+        widget.usr.token,
       );
 
       if (context.mounted) {
-        if (registerUsr != null) {
+        if (updateUsr != null) {
           // Obtain json from registerUsr string
-          var jsonResponse = jsonDecode(registerUsr);
+          var jsonResponse = jsonDecode(updateUsr);
 
           if (jsonResponse["inserted"] != -1) {
             Navigator.pop(context);
@@ -231,6 +266,30 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         const SizedBox(height: 10),
                       ]),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    TextButton(
+                      onPressed: () => showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Delete Account...'),
+                          content: const Text('Are you sure?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => deleteAccount(widget.usr),
+                              child: const Text('Yes'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      style: TextButton.styleFrom(foregroundColor: Colors.red),
+                      child: const Text('Delete Account'),
                     ),
 
                     const SizedBox(height: 25),
